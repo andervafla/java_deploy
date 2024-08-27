@@ -1,19 +1,22 @@
-# Class chedule
+# Deploy
 ## General info
-This repository contains a source code of the Class Schedule Project.
+Runbook 
 
-The main goal of the project is designing a website where the university or institute staff will be able to create, store and display their training schedules.
+## FrontendDockerfile
+FROM node:14.17.4
 
-Link to the development version of the site: https://develop-softserve.herokuapp.com/
+WORKDIR /app
 
-## Creating a local repository
-In order to create a local copy of the project you need:
-1. Download and install the last version of Git https://git-scm.com/downloads
-2. Open a terminal and go to the directory where you want to clone the files. 
-3. Run the following command. Git automatically creates a folder with the repository name and downloads the files there.
+COPY package*.json ./
 
-       git clone https://gitlab.com/class_schedule/class_schedule.backend.git
-4. Enter your username and password if GitLab requests.
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
+
 
 ## Database
 1. Download and install the last version of PostgreSQL https://www.postgresql.org/download/
