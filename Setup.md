@@ -20,6 +20,14 @@ In order to create a local copy of the project you need:
 https://github.com/andervafla/java_deploy/blob/devops-deploy
 ```
 
+## Create .env
+ ```
+POSTGRES_DB=postgres_db
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+```
+
+
 ## Frontend
 ```
 FROM node:14.17.4
