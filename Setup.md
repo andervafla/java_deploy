@@ -17,7 +17,7 @@ In order to create a local copy of the project you need:
 3.Run the following command. Git automatically creates a folder with the repository name and downloads the files there.
 
 ```
-git clone https://gitlab.com/class_schedule/class_schedule.backend.git
+https://github.com/andervafla/java_deploy/blob/devops-deploy
 ```
 
 ## Frontend
