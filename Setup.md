@@ -8,6 +8,18 @@
 - Gradle 7.5
 - Source code
 
+In order to create a local copy of the project you need:
+
+1.Download and install the last version of Git https://git-scm.com/downloads
+
+2.Open a terminal and go to the directory where you want to clone the files.
+
+3.Run the following command. Git automatically creates a folder with the repository name and downloads the files there.
+
+```
+git clone https://gitlab.com/class_schedule/class_schedule.backend.git
+```
+
 ## Frontend
 ```
 FROM node:14.17.4
