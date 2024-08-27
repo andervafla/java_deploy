@@ -1,5 +1,13 @@
 # Runbook
 
+##Prerequisites
+- Postgress DB
+- Mongodb
+- Redis
+- Tomcat 9
+- Gradle 7.5
+- Source code
+
 ## Frontend
 ```
 FROM node:14.17.4
