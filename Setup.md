@@ -22,9 +22,9 @@ https://github.com/andervafla/java_deploy/blob/devops-deploy
 
 ## Create .env
  ```
-POSTGRES_DB=postgres_db
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=password
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
 ```
 
 
