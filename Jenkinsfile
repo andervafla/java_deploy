@@ -52,20 +52,6 @@ pipeline {
         }
     }
 
-        stage('Push to DockerHub') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-                        dockerImageFrontend.push("${env.BUILD_NUMBER}")
-                        dockerImageFrontend.push("latest")
-
-                        dockerImageBackend.push("${env.BUILD_NUMBER}")
-                        dockerImageBackend.push("latest")
-                    }
-                }
-            }
-        }
-
 
     post {
         always {
