@@ -18,18 +18,18 @@ pipeline {
             }
         }
 
-        stage('Build Frontend Image') {
-            steps {
-                script {
-                    dockerImageFrontend = docker.build("${FRONTEND_IMAGE}:${env.BUILD_NUMBER}", "./frontend")
-                }
-            }
-        }
-
         stage('Build Backend Image') {
             steps {
                 script {
                     dockerImageBackend = docker.build("${BACKEND_IMAGE}:${env.BUILD_NUMBER}", ".")
+                }
+            }
+        }
+
+        stage('Build Frontend Image') {
+            steps {
+                script {
+                    dockerImageFrontend = docker.build("${FRONTEND_IMAGE}:${env.BUILD_NUMBER}", "./frontend")
                 }
             }
         }
