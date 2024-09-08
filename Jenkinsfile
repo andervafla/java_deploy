@@ -43,6 +43,15 @@ pipeline {
             }
         }
 
+        stage('Deploy with Docker Compose') {
+            steps {
+                script {
+                    sh 'docker-compose up -d --build'
+                }
+            }
+        }
+    }
+
         stage('Push to DockerHub') {
             steps {
                 script {
@@ -57,14 +66,6 @@ pipeline {
             }
         }
 
-        stage('Deploy with Docker Compose') {
-            steps {
-                script {
-                    sh 'docker-compose up -d --build'
-                }
-            }
-        }
-    }
 
     post {
         always {
