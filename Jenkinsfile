@@ -18,6 +18,15 @@ pipeline {
             }
         }
 
+        stage('Print Directory Contents') {
+    steps {
+        script {
+            sh 'ls -la'
+            sh 'ls -la frontend'
+        }
+    }
+}    
+
         stage('Build Backend Image') {
             steps {
                 script {
