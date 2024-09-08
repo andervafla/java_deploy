@@ -1,30 +1,32 @@
 #!/bin/bash
 
-#change on your path to PostgreSQL
-#pathA=/c/Program\ Files/PostgreSQL/13/bin
-#export PATH=$PATH:$pathA
-
-#write your password
-PGPASSWORD=root
+# Налаштування облікових даних PostgreSQL
+PGPASSWORD=password
 export PGPASSWORD
 
-#change the path to the file from which will be made restore
-pathB=../backup/
-#write this on the command line as the first parameter
+# Шлях до резервної копії
 filename=$1
-#write your user
+
+# Налаштування з'єднання з PostgreSQL
 dbUser=postgres
-#write your database
-database=schedule
-#write your host
-host=localhost
-#write your port
+database=postgres_db
+host=postgres  # Ім'я контейнера PostgreSQL з Docker Compose
 port=5432
 
-psql -U $dbUser -h $host -p $port -d $database -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
-psql --set ON_ERROR_STOP=off -U $dbUser -h $host -p $port -d $database -1 -f $pathB$filename
+# Перевірка доступності PostgreSQL перед завантаженням дампу
+until psql -U $dbUser -h $host -p $port -d $database -c '\q'; do
+  >&2 echo "Postgres не готовий... чекаємо"
+  sleep 5
+done
 
+# Переконайтеся, що резервна копія існує
+if [ ! -f "$filename" ]; then
+  echo "Файл резервної копії $filename не знайдено!"
+  exit 1
+fi
+
+# Відновлення бази даних з резервної копії
+pg_restore -U $dbUser -h $host -p $port -d $database "$filename"
+
+# Очистка пароля
 unset PGPASSWORD
-
-psql -U postgres -d schedule -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
-psql --set ON_ERROR_STOP=off -U postgres -d schedule -1 -f 2023-08-31.dump
