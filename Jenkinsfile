@@ -7,10 +7,6 @@ pipeline {
         BACKEND_IMAGE = "andervafla/backend-image"
     }
 
-    triggers {
-        pollSCM('H/10 * * * *') 
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -25,7 +21,7 @@ pipeline {
                     sh 'ls -la frontend'
                 }
             }
-        }    
+        }
 
         stage('Build Backend Image') {
             steps {
