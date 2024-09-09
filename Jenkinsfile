@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhubid')
         FRONTEND_IMAGE = "andervafla/frontend-image"
         BACKEND_IMAGE = "andervafla/backend-image"
     }
@@ -42,13 +41,12 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-                        dockerImageBackend.push("${env.BUILD_NUMBER}")
-                        dockerImageBackend.push("latest")
+                    // Push images to DockerHub using default Docker credentials
+                    dockerImageBackend.push("${env.BUILD_NUMBER}")
+                    dockerImageBackend.push("latest")
 
-                        dockerImageFrontend.push("${env.BUILD_NUMBER}")
-                        dockerImageFrontend.push("latest")
-                    }
+                    dockerImageFrontend.push("${env.BUILD_NUMBER}")
+                    dockerImageFrontend.push("latest")
                 }
             }
         }
