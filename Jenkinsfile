@@ -41,7 +41,7 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 script {
-                    // Push images to DockerHub using default Docker credentials
+                   
                     dockerImageBackend.push("${env.BUILD_NUMBER}")
                     dockerImageBackend.push("latest")
 
@@ -64,3 +64,4 @@ pipeline {
         }
     }
 }
+
