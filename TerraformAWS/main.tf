@@ -22,14 +22,31 @@ resource "aws_instance" "example" {
   key_name      = aws_key_pair.my_key.key_name  
 
   tags = {
-    Name = "MyFirs"
+    Name = "MyFirstInstance"
   }
 
-  user_data = <<-EOF
-              #!/bin/bash
-              sudo apt update -y
-              sudo apt install -y nginx
-              EOF
+  user_data = file("D:/internship-project/internship_project/TerraformAWS/setupFront.sh")
+
+}
+
+# Create a security group to allow HTTP traffic
+resource "aws_security_group" "instance_sg" {
+  name        = "allow_http"
+  description = "Allow HTTP traffic"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 output "instance_public_ip" {
