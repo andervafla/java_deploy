@@ -4,5 +4,9 @@
 /backup
 /src/test/resources/hibernatetest.properties
 /schedule_logs
-/terraformAWS/
+/terraformAWS/.terraform
 /terraform/
+terraformAWS/key
+terraformAWS/.terraform.lock.hcl
+terraformAWS/terraform.tfstate
+terraformAWS/terraform.tfstate.backup
