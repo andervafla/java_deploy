@@ -46,12 +46,15 @@ pipeline {
 
         stage('Apply Terraform') {
             steps {
-                withCredentials([string(credentialsId: SSH_CREDENTIALS_ID, variable: 'my-ssh-key')]) {
+                // Отримання SSH ключа
+                withCredentials([sshUserPrivateKey(credentialsId: SSH_CREDENTIALS_ID, keyVariable: 'my_ssh_key', usernameVariable: 'SSH_USER')]) {
                     dir("${TERRAFORM_DIR}") {
-                        sh 'echo "$my-ssh-key" > /tmp/my_public_key.pub'
+                        // Запис публічного ключа у файл
+                        sh 'echo "$my_ssh_key" > /tmp/my_public_key.pub'
                         
+                        // Виконання команди Terraform
                         sh '''
-                            terraform apply -var="key_path=/tmp/my_public_key" -auto-approve
+                            terraform apply -var="key_path=/tmp/my_public_key.pub" -auto-approve
                         '''
                     }
                 }
