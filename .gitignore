@@ -1,6 +1,6 @@
 /.gradle
 /.idea
-/build
+build/libs
 /gradle
 /backup
 /src/test/resources/hibernatetest.properties
