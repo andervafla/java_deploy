@@ -11,17 +11,11 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'devops-ci/cd', url: "${GITHUB_REPO}"
+                git branch: 'main', url: "${GITHUB_REPO}"
             }
         }
 
-    stage('List Files') {
-            steps {
-                dir('terraformAWS') {
-                    sh 'ls -la' // Вивести список файлів
-                }
-            }
-        }
+    
 
         stage('Initialize Terraform') {
             steps {
