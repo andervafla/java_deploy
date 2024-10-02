@@ -15,11 +15,9 @@ pipeline {
             }
         }
 
-     stage('List Files') {
+    stage('List Files') {
             steps {
-                dir('terraformAWS') {
-                    sh 'ls -la' // Вивести список файлів
-                }
+                sh 'ls -la'
             }
         }
     
