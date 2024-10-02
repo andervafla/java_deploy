@@ -15,6 +15,8 @@ pipeline {
             }
         }
 
+    
+
         stage('Initialize Terraform') {
             steps {
                 dir("${TERRAFORM_DIR}") {
