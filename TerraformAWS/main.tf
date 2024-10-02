@@ -13,7 +13,7 @@ provider "aws" {
 
 resource "aws_key_pair" "my_key" {
   key_name   = "my-key"
-  public_key = file("${var.key_path}.pub") 
+  public_key = file(".pub") 
 }
 
 # Create a VPC
