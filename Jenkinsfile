@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: "${GITHUB_REPO}"
+                sh "git clone --depth 1 ${GITHUB_REPO}"
             }
         }
     
