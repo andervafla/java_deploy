@@ -2,51 +2,33 @@ pipeline {
     agent any
 
     environment {
-        FRONTEND_IMAGE = "andervafla/frontend-image"
-        BACKEND_IMAGE = "andervafla/backend-image"
+        GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git'
+        TERRAFORM_DIR = 'terraformAWS'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/andervafla/java_deploy.git'
+                git branch: 'main', url: "${GITHUB_REPO}"
             }
         }
 
-        stage('Print Directory Contents') {
+        stage('Initialize Terraform') {
             steps {
-                script {
-                    sh 'ls -la'
-                    sh 'ls -la frontend'
+                dir("${TERRAFORM_DIR}") {
+                    script {
+                        sh 'terraform init'
+                    }
                 }
             }
         }
 
-        stage('Build Backend Image') {
+        stage('Apply Terraform') {
             steps {
-                script {
-                    dockerImageBackend = docker.build("${BACKEND_IMAGE}:${env.BUILD_NUMBER}", ".")
-                }
-            }
-        }
-
-        stage('Build Frontend Image') {
-            steps {
-                script {
-                    dockerImageFrontend = docker.build("${FRONTEND_IMAGE}:${env.BUILD_NUMBER}", "./frontend")
-                }
-            }
-        }
-
-        stage('Push to DockerHub') {
-            steps {
-                script {
-                   
-                    dockerImageBackend.push("${env.BUILD_NUMBER}")
-                    dockerImageBackend.push("latest")
-
-                    dockerImageFrontend.push("${env.BUILD_NUMBER}")
-                    dockerImageFrontend.push("latest")
+                dir("${TERRAFORM_DIR}") {
+                    script {
+                        sh 'terraform apply -auto-approve'
+                    }
                 }
             }
         }
@@ -64,4 +46,3 @@ pipeline {
         }
     }
 }
-
