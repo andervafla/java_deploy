@@ -44,7 +44,7 @@ pipeline {
 
         stage('Apply Terraform') {
             steps {
-                withCredentials([string(credentialsId: PUBLIC_KEY_CREDENTIALS_ID, variable: 'my-ssh-key')]) {
+                withCredentials([string(credentialsId: SSH_CREDENTIALS_ID, variable: 'my-ssh-key')]) {
                     dir("${TERRAFORM_DIR}") {
                         sh 'echo "$my-ssh-key" > /tmp/my_public_key.pub'
                         
