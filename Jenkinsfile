@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git'
         TERRAFORM_DIR = 'TerraformAWS'
         SSH_CREDENTIALS_ID = 'my-ssh-key'
     }
@@ -10,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                sh "git clone --depth 1 ${GITHUB_REPO}"
+                sh "git clone --depth 1 https://github.com/andervafla/java_deploy.git"
             }
         }
     
