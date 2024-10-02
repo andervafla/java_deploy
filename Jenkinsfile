@@ -4,7 +4,6 @@ pipeline {
     environment {
         GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
         TERRAFORM_DIR = 'terraformAWS'
-        SSH_CREDENTIALS_ID = 'my-ssh-key'
     }
 
     stages {
@@ -46,17 +45,11 @@ pipeline {
 
         stage('Apply Terraform') {
             steps {
-                // Отримання SSH ключа
-                withCredentials([sshUserPrivateKey(credentialsId: SSH_CREDENTIALS_ID, keyVariable: 'my_ssh_key', usernameVariable: 'SSH_USER')]) {
-                    dir("${TERRAFORM_DIR}") {
-                        // Запис публічного ключа у файл
-                        sh 'echo "$my_ssh_key" > /tmp/my_public_key.pub'
-                        
-                        // Виконання команди Terraform
-                        sh '''
-                            terraform apply -var="key_path=/tmp/my_public_key.pub" -auto-approve
-                        '''
-                    }
+                dir("${TERRAFORM_DIR}") {
+                    // Виконання команди Terraform
+                    sh '''
+                        terraform apply -auto-approve
+                    '''
                 }
             }
         }

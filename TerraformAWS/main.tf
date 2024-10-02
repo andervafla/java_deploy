@@ -18,7 +18,7 @@ variable "key_path" {
 
 resource "aws_key_pair" "my_key" {
   key_name   = "my-key"
-  public_key = file("${var.key_path}.pub") 
+  public_key = file("terraformAWS/pub-key/my_ssh_key.pub") 
 }
 
 # Create a VPC
