@@ -11,6 +11,11 @@ provider "aws" {
   region = "us-east-1" 
 }
 
+variable "key_path" {
+  description = "The path to the SSH key"
+  type        = string
+}
+
 resource "aws_key_pair" "my_key" {
   key_name   = "my-key"
   public_key = file("${var.key_path}.pub") 
