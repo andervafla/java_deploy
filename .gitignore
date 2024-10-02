@@ -8,6 +8,4 @@
 /terraformAWS/.terraform
 /terraform/
 terraformAWS/key
-terraformAWS/.terraform.lock.hcl
-terraformAWS/terraform.tfstate
-terraformAWS/terraform.tfstate.backup
+
