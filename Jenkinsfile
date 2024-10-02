@@ -2,19 +2,23 @@ pipeline {
     agent any
 
     environment {
-        GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git'
+        GITHUB_REPO = 'https://github.com/andervafla/java_deploy/archive/refs/heads/pipeline.zip' // URL для ZIP
         TERRAFORM_DIR = 'TerraformAWS'
         SSH_CREDENTIALS_ID = 'my-ssh-key'
-        BRANCH_NAME = 'pipeline' // Додайте змінну для назви вітки
     }
 
     stages {
-        stage('Checkout') {
+        stage('Download ZIP') {
             steps {
-                // Клонувати репозиторій і перейти на вітку 'pipeline'
-                sh """
-                    git clone --depth 1 -b ${BRANCH_NAME} ${GITHUB_REPO}
-                """
+                // Завантажити ZIP-архів з репозиторію
+                sh "curl -L -o java_deploy.zip ${GITHUB_REPO}"
+            }
+        }
+
+        stage('Unzip') {
+            steps {
+                // Розархівувати ZIP-архів
+                sh 'unzip java_deploy.zip'
             }
         }
     
