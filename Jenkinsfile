@@ -15,12 +15,19 @@ pipeline {
             }
         }
 
+     stage('List Files') {
+            steps {
+                dir('TerraformAWS') {
+                    sh 'ls -la' 
+                }
+            }
+        }
+    
     stage('List Files') {
             steps {
                 sh 'ls -la'
             }
         }
-    
 
         stage('Initialize Terraform') {
             steps {
