@@ -44,11 +44,12 @@ pipeline {
 
         stage('Apply Terraform') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: SSH_CREDENTIALS_ID, keyFileVariable: 'SSH_KEY')]) {
+                withCredentials([string(credentialsId: PUBLIC_KEY_CREDENTIALS_ID, variable: 'my-ssh-key')]) {
                     dir("${TERRAFORM_DIR}") {
-                        // Застосування Terraform
+                        sh 'echo "$my-ssh-key" > /tmp/my_public_key.pub'
+                        
                         sh '''
-                            terraform apply -var="key_path=$SSH_KEY" -auto-approve
+                            terraform apply -var="key_path=/tmp/my_public_key" -auto-approve
                         '''
                     }
                 }
