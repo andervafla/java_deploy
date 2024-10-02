@@ -15,7 +15,8 @@ pipeline {
 
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: "${GITHUB_REPO}"
+                // Використовуємо git clone з параметрами depth та branch
+                sh "git clone --depth 1 --branch main ${GITHUB_REPO} ."
             }
         }
 
