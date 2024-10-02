@@ -2,14 +2,19 @@ pipeline {
     agent any
 
     environment {
+        GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git'
         TERRAFORM_DIR = 'TerraformAWS'
         SSH_CREDENTIALS_ID = 'my-ssh-key'
+        BRANCH_NAME = 'pipeline' // Додайте змінну для назви вітки
     }
 
     stages {
         stage('Checkout') {
             steps {
-                sh "git clone --depth 1 https://github.com/andervafla/java_deploy.git"
+                // Клонувати репозиторій і перейти на вітку 'pipeline'
+                sh """
+                    git clone --depth 1 -b ${BRANCH_NAME} ${GITHUB_REPO}
+                """
             }
         }
     
