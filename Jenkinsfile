@@ -15,6 +15,13 @@ pipeline {
             }
         }
 
+     stage('List Files') {
+            steps {
+                dir('terraformAWS') {
+                    sh 'ls -la' // Вивести список файлів
+                }
+            }
+        }
     
 
         stage('Initialize Terraform') {
