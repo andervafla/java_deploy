@@ -2,24 +2,24 @@ pipeline {
     agent any
 
     environment {
-        GITHUB_REPO = 'https://github.com/andervafla/java_deploy/archive/refs/heads/main.zip' 
-        TERRAFORM_DIR = 'TerraformAWS'
+        GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
+        TERRAFORM_DIR = 'terraformAWS'
         SSH_CREDENTIALS_ID = 'my-ssh-key'
     }
 
     stages {
-        stage('Download ZIP') {
+        stage('Print Hello World') {
             steps {
-                sh "curl -L -o java_deploy.zip ${GITHUB_REPO}"
+                echo 'Hello, World!'
             }
         }
 
-        stage('Unzip') {
+        stage('Checkout from Git') {
             steps {
-                sh 'unzip java_deploy.zip'
+                git branch: 'main', url: "${GITHUB_REPO}"
             }
         }
-    
+
         stage('List Files in Root Directory') {
             steps {
                 sh 'ls -la'
