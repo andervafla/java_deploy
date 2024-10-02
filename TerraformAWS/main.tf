@@ -13,9 +13,10 @@ provider "aws" {
 
 resource "aws_key_pair" "my_key" {
   key_name   = "my-key"
-  public_key = file("D:/internship-project/internship_project/TerraformAWS/key/my-key.pub") 
+  public_key = file("${var.key_path}.pub") 
 }
 
+# Create a VPC
 resource "aws_vpc" "my_vpc" {
   cidr_block = "10.0.0.0/16"
 }
@@ -127,6 +128,7 @@ resource "aws_security_group" "backend_sg" {
   }
 }
 
+# Create the frontend EC2 instance with a public IP
 resource "aws_instance" "frontend" {
   ami                    = "ami-0e86e20dae9224db8" 
   instance_type          = "t2.micro"
@@ -138,11 +140,9 @@ resource "aws_instance" "frontend" {
   tags = {
     Name = "MyFrontendInstance"
   }
-
-  user_data = file("D:/internship-project/internship_project/TerraformAWS/setupFront.sh")
 }
 
-
+# Створення EC2 інстанса для бекенда
 resource "aws_instance" "backend" {
   ami                    = "ami-0e86e20dae9224db8" 
   instance_type          = "t2.micro"
@@ -154,8 +154,6 @@ resource "aws_instance" "backend" {
   tags = {
     Name = "MyBackendInstance"
   }
-
-  user_data = file("D:/internship-project/internship_project/TerraformAWS/setupBack.sh")  
 }
 
 output "frontend_public_ip" {

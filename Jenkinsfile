@@ -4,7 +4,9 @@ pipeline {
     environment {
         GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git'
         TERRAFORM_DIR = 'terraformAWS'
+        SSH_CREDENTIALS_ID = 'my-ssh-key'
     }
+
 
     stages {
         stage('Checkout') {
@@ -25,10 +27,11 @@ pipeline {
 
         stage('Apply Terraform') {
             steps {
-                dir("${TERRAFORM_DIR}") {
-                    script {
-                        sh 'terraform apply -auto-approve'
-                    }
+                withCredentials([sshUserPrivateKey(credentialsId: SSH_CREDENTIALS_ID, keyFileVariable: 'SSH_KEY')]) {
+                    sh '''
+                        terraform init
+                        terraform apply -var="key_path=$SSH_KEY" -auto-approve
+                    '''
                 }
             }
         }
