@@ -10,21 +10,18 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Клонування репозиторію з вказаної гілки
                 git branch: 'main', url: "${GITHUB_REPO}"
             }
         }
     
         stage('List Files in Root Directory') {
             steps {
-                // Виведення списку файлів у кореневій директорії після клонування
                 sh 'ls -la'
             }
         }
 
         stage('List Files in Terraform Directory') {
             steps {
-                // Виведення списку файлів у папці TerraformAWS
                 dir("${TERRAFORM_DIR}") {
                     sh 'ls -la' 
                 }
@@ -35,7 +32,6 @@ pipeline {
             steps {
                 dir("${TERRAFORM_DIR}") {
                     script {
-                        // Ініціалізація Terraform
                         sh 'terraform init'
                     }
                 }
@@ -59,7 +55,6 @@ pipeline {
 
     post {
         always {
-            // Очищення робочого простору
             cleanWs()
         }
         success {
