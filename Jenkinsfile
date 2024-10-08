@@ -13,6 +13,17 @@ pipeline {
             }
         }
 
+
+        stages {
+            stage('Check Terraform') {
+                steps {
+                    sh 'which terraform'
+                    sh 'terraform --version'
+                }
+            }
+        }
+
+
         stage('List Files in Root Directory') {
             steps {
                 sh 'ls -la'
