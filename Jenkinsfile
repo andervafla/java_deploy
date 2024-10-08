@@ -4,6 +4,7 @@ pipeline {
     environment {
         GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
         TERRAFORM_DIR = 'terraformAWS'
+        PATH = "/usr/bin/terraform"  
     }
 
     stages {
@@ -12,17 +13,6 @@ pipeline {
                 echo 'Hello, World!'
             }
         }
-
-
-        stages {
-            stage('Check Terraform') {
-                steps {
-                    sh 'which terraform'
-                    sh 'terraform --version'
-                }
-            }
-        }
-
 
         stage('List Files in Root Directory') {
             steps {
