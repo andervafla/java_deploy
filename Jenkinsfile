@@ -13,6 +13,18 @@ pipeline {
             }
         }
 
+        stage('Install Terraform') {
+            steps {
+                sh '''
+                    if ! command -v terraform &> /dev/null; then
+                        wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+                        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+                        sudo apt update && sudo apt install -y terraform
+                    fi
+                '''
+            }
+        }
+
         stage('List Files in Root Directory') {
             steps {
                 sh 'ls -la'
