@@ -1,0 +1,5 @@
+ssh_key_path: D:/internship-project/internship_project/terraformAWS/key/my_ssh_key
+
+frontend_ip: 
+backend_ip: 
+database_ip: 
