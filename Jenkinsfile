@@ -34,7 +34,7 @@ pipeline {
         stage('List Files in Terraform Directory') {
             steps {
                 dir("${TERRAFORM_DIR}") {
-                    sh 'ls -la' 
+                    sh 'terraform -version' 
                 }
             }
         }
