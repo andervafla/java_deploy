@@ -16,12 +16,15 @@ pipeline {
         stage('Install Terraform') {
             steps {
                 sh '''
-                    if ! command -v terraform &> /dev/null; then
-                        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-                        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-                        apt update && apt install -y terraform
-                    fi
-                '''
+                        # Завантажте Terraform
+                        wget https://releases.hashicorp.com/terraform/1.5.5/terraform_1.5.5_linux_amd64.zip
+                        # Розпакуйте архів
+                        unzip terraform_1.5.5_linux_amd64.zip
+                        # Перемістіть бінарний файл в директорію, доступну для вашого користувача
+                        mv terraform /usr/local/bin/
+                        # Перевірте установку
+                        terraform -version
+                    '''
             }
         }
 
