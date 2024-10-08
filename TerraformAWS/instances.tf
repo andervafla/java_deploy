@@ -1,6 +1,5 @@
-
 resource "aws_instance" "frontend" {
-  ami                    = "ami-0e86e20dae9224db8" 
+  ami                    = "ami-005fc0f236362e99f" 
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.my_key.key_name  
   subnet_id              = aws_subnet.frontend_subnet.id
@@ -13,7 +12,7 @@ resource "aws_instance" "frontend" {
 }
 
 resource "aws_instance" "backend" {
-  ami                    = "ami-0e86e20dae9224db8" 
+  ami                    = "ami-005fc0f236362e99f" 
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.my_key.key_name  
   subnet_id              = aws_subnet.backend_subnet.id
@@ -26,7 +25,7 @@ resource "aws_instance" "backend" {
 }
 
 resource "aws_instance" "database" {
-  ami                    = "ami-0e86e20dae9224db8" 
+  ami                    = "ami-005fc0f236362e99f" 
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.my_key.key_name  
   subnet_id              = aws_subnet.database_subnet.id

@@ -15,7 +15,7 @@ pipeline {
 
         stage('Checkout from Git') {
             steps {
-                // Використовуємо git clone з параметрами depth та branch
+            
                 sh "git clone --depth 1 --branch main ${GITHUB_REPO} ."
             }
         }
@@ -47,7 +47,6 @@ pipeline {
         stage('Apply Terraform') {
             steps {
                 dir("${TERRAFORM_DIR}") {
-                    // Виконання команди Terraform
                     sh '''
                         terraform apply -auto-approve
                     '''

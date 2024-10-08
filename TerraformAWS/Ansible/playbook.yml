@@ -1,0 +1,15 @@
+---
+- name: Setup frontend server
+  hosts: frontend_group
+  roles:
+    - frontend
+
+- name: Setup backend server
+  hosts: backend_group
+  roles:
+    - backend
+
+- name: Setup database server
+  hosts: database_group
+  roles:
+    - database
