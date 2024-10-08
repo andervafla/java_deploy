@@ -13,15 +13,6 @@ pipeline {
             }
         }
 
-        stage('Checkout from Git') {
-    steps {
-        script {
-            sh 'rm -rf ./*' // Очищує каталог перед клонуванням
-            sh "git clone --depth 1 --branch main ${GITHUB_REPO} ."
-        }
-    }
-}
-
         stage('List Files in Root Directory') {
             steps {
                 sh 'ls -la'
