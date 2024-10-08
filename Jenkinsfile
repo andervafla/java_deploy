@@ -13,24 +13,10 @@ pipeline {
             }
         }
 
-        stage('Install Terraform') {
-            steps {
-                sh '''
-                        # Завантажте Terraform
-                        wget https://releases.hashicorp.com/terraform/1.5.5/terraform_1.5.5_linux_amd64.zip
-                        # Розпакуйте архів
-                        unzip terraform_1.5.5_linux_amd64.zip
-                        # Перемістіть бінарний файл в директорію, доступну для вашого користувача
-                        mv terraform /usr/local/bin/
-                        # Перевірте установку
-                        terraform -version
-                    '''
-            }
-        }
 
         stage('List Files in Root Directory') {
             steps {
-                sh 'ls -la'
+                sh 'terraform -version'
             }
         }
 
