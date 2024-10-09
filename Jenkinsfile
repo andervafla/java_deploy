@@ -27,7 +27,7 @@ pipeline {
             }
         }   
 
-         stage('List Files in Terraform Directory') {
+        stage('Initialize Terraform') {  // Оновлено назву етапу
             steps {
                 dir("${TERRAFORM_DIR}") {
                     sh 'terraform init' 
@@ -35,16 +35,13 @@ pipeline {
             }
         }
 
-        stage('List Files in Terraform Directory') {
+        stage('Destroy Terraform Resources') {  // Оновлено назву етапу
             steps {
                 dir("${TERRAFORM_DIR}") {
                     sh 'terraform destroy -auto-approve' 
                 }
             }
         }
-
-
-
     }
 
     post {
