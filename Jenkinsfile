@@ -5,14 +5,14 @@ pipeline {
 
     environment {
         GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
-        TERRAFORM_DIR = 'terraformAWS'
+        TERRAFORM_DIR = 'TerraformAWS'
 
     }
 
     stages {
-        stage('Print Hello World') {
+        stage('show files') {
             steps {
-                echo 'Hello, World!'
+                sh 'ls'
             }
         }
 
