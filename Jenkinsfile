@@ -22,7 +22,7 @@ pipeline {
         stage('Navigate to Frontend Directory') {
             steps {
                 dir("${FRONTEND_DIR}") {
-                    sh 'ls -la'  // Переглянути файли у папці frontend
+                    sh 'ls -la'  
                 }
             }
         }   
@@ -30,10 +30,15 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 dir("${FRONTEND_DIR}") {
-                    sh 'npm install'  // Встановлення залежностей
-                    sh 'npm run build' // Команда для білду
+                    sh 'npm install'  
+                    sh 'npm run build' 
                 }
             }
+        }
+
+        stage('Build Backend') {
+            steps {
+                sh 'gradle build -x test --no-daemon' 
         }
     }
 
