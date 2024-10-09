@@ -27,6 +27,14 @@ pipeline {
             }
         }   
 
+         stage('List Files in Terraform Directory') {
+            steps {
+                dir("${TERRAFORM_DIR}") {
+                    sh 'terraform init' 
+                }
+            }
+        }
+
         stage('List Files in Terraform Directory') {
             steps {
                 dir("${TERRAFORM_DIR}") {
@@ -34,6 +42,9 @@ pipeline {
                 }
             }
         }
+
+
+
     }
 
     post {
