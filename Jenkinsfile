@@ -10,9 +10,9 @@ pipeline {
     }
 
     stages {
-        stage('Print Hello World') {
+        stage('show files') {
             steps {
-                echo 'Hello, World!'
+                sh 'ls'
             }
         }
 
