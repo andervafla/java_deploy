@@ -39,6 +39,7 @@ pipeline {
         stage('Build Backend') {
             steps {
                 sh 'gradle build -x test --no-daemon' 
+            }
         }
     }
 
