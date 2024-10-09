@@ -17,7 +17,7 @@ pipeline {
 
         stage('List Files in Root Directory') {
             steps {
-                sh 'terraform -version'
+                sh '/usr/bin/terraform -version'
             }
         }
 
