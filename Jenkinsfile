@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent { label 'jenks-node' }
+
+
 
     environment {
         GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
