@@ -1,12 +1,9 @@
 pipeline {
     agent { label 'jenks-node' }
 
-
-
     environment {
         GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
         TERRAFORM_DIR = 'TerraformAWS'
-
     }
 
     stages {
@@ -15,7 +12,6 @@ pipeline {
                 sh 'ls'
             }
         }
-
 
         stage('List Files in Root Directory') {
             steps {
@@ -38,27 +34,7 @@ pipeline {
                 }
             }
         }
-
-    //     stage('Initialize Terraform') {
-    //         steps {
-    //             dir("${TERRAFORM_DIR}") {
-    //                 script {
-    //                     sh 'terraform init'
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     stage('Apply Terraform') {
-    //         steps {
-    //             dir("${TERRAFORM_DIR}") {
-    //                 sh '''
-    //                     terraform apply -auto-approve
-    //                 '''
-    //             }
-    //         }
-    //     }
-    // }
+    }
 
     post {
         always {
