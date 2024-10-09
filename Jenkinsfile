@@ -4,12 +4,33 @@ pipeline {
     environment {
         GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
         FRONTEND_DIR = 'frontend'
-        GRADLE_VERSION = '7.2'  // Вказати версію Gradle
-        GRADLE_HOME = "${env.WORKSPACE}/gradle"  // Директорія для Gradle
-        GRADLE_BIN = "${GRADLE_HOME}/gradle-${GRADLE_VERSION}/bin" // Директорія з бінарними файлами Gradle
+        TERRAFORM_DIR = 'TerraformAWS'
+        GRADLE_VERSION = '7.2' 
+        GRADLE_HOME = "${env.WORKSPACE}/gradle"  
+        GRADLE_BIN = "${GRADLE_HOME}/gradle-${GRADLE_VERSION}/bin" 
     }
 
     stages {
+      
+        stage('Initialize Terraform') {
+            steps {
+                dir("${TERRAFORM_DIR}") {
+                    script {
+                        sh 'terraform init'
+                    }
+                }
+            }
+        }
+
+        stage('Apply Terraform') {
+            steps {
+                dir("${TERRAFORM_DIR}") {
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+
+      
         stage('Show files') {
             steps {
                 sh 'ls'
@@ -25,7 +46,6 @@ pipeline {
         stage('Download Gradle') {
             steps {
                 script {
-                    // Перевірка, чи Gradle вже завантажений
                     if (!fileExists("${GRADLE_BIN}/gradle")) {
                         echo "Downloading Gradle ${GRADLE_VERSION}..."
                         sh """
@@ -44,16 +64,16 @@ pipeline {
         stage('Navigate to Frontend Directory') {
             steps {
                 dir("${FRONTEND_DIR}") {
-                    sh 'ls -la'  // Переглянути файли у папці frontend
+                    sh 'ls -la'
                 }
             }
-        }   
+        }
 
         stage('Build Frontend') {
             steps {
                 dir("${FRONTEND_DIR}") {
-                    sh 'npm install'  // Встановлення залежностей
-                    sh 'npm run build' // Команда для білду
+                    sh 'npm install'
+                    sh 'npm run build'
                 }
             }
         }
@@ -61,10 +81,8 @@ pipeline {
         stage('Build Backend') {
             steps {
                 script {
-                    // Додавання Gradle до PATH
                     env.PATH = "${GRADLE_BIN}:${env.PATH}"
-                    
-                    sh 'gradle build -x test --no-daemon' // Команда для білду бекенду
+                    sh 'gradle build -x test --no-daemon'
                 }
             }
         }
@@ -79,6 +97,16 @@ pipeline {
         }
         failure {
             echo 'Pipeline failed. Check the logs.'
+        }
+
+        cleanup {
+            stage('Destroy Terraform Resources') {
+                steps {
+                    dir("${TERRAFORM_DIR}") {
+                        sh 'terraform destroy -auto-approve'
+                    }
+                }
+            }
         }
     }
 }
