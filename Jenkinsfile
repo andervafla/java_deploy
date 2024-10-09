@@ -11,7 +11,6 @@ pipeline {
     }
 
     stages {
-      
         stage('Initialize Terraform') {
             steps {
                 dir("${TERRAFORM_DIR}") {
@@ -30,7 +29,6 @@ pipeline {
             }
         }
 
-      
         stage('Show files') {
             steps {
                 sh 'ls'
@@ -100,11 +98,9 @@ pipeline {
         }
 
         cleanup {
-            stage('Destroy Terraform Resources') {
-                steps {
-                    dir("${TERRAFORM_DIR}") {
-                        sh 'terraform destroy -auto-approve'
-                    }
+            steps {
+                dir("${TERRAFORM_DIR}") {
+                    sh 'terraform destroy -auto-approve'
                 }
             }
         }
