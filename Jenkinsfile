@@ -4,7 +4,6 @@ pipeline {
     environment {
         GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
         TERRAFORM_DIR = 'terraformAWS'
-        PATH = "/usr/bin/terraform"
 
     }
 
