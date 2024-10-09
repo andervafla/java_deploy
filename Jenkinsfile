@@ -34,31 +34,31 @@ pipeline {
         stage('List Files in Terraform Directory') {
             steps {
                 dir("${TERRAFORM_DIR}") {
-                    sh 'terraform -version' 
+                    sh 'terraform destroy -auto-approve' 
                 }
             }
         }
 
-        stage('Initialize Terraform') {
-            steps {
-                dir("${TERRAFORM_DIR}") {
-                    script {
-                        sh 'terraform init'
-                    }
-                }
-            }
-        }
+    //     stage('Initialize Terraform') {
+    //         steps {
+    //             dir("${TERRAFORM_DIR}") {
+    //                 script {
+    //                     sh 'terraform init'
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        stage('Apply Terraform') {
-            steps {
-                dir("${TERRAFORM_DIR}") {
-                    sh '''
-                        terraform apply -auto-approve
-                    '''
-                }
-            }
-        }
-    }
+    //     stage('Apply Terraform') {
+    //         steps {
+    //             dir("${TERRAFORM_DIR}") {
+    //                 sh '''
+    //                     terraform apply -auto-approve
+    //                 '''
+    //             }
+    //         }
+    //     }
+    // }
 
     post {
         always {
