@@ -19,9 +19,17 @@ pipeline {
 
         stage('List Files in Root Directory') {
             steps {
-                sh '/usr/bin/terraform -version'
+                sh 'terraform -version'
             }
         }
+
+        stage('Check Terraform Files') {
+            steps {
+                dir("${TERRAFORM_DIR}") {
+                    sh 'ls -la'
+                }
+            }
+        }   
 
         stage('List Files in Terraform Directory') {
             steps {
