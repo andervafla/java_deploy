@@ -13,7 +13,7 @@ provider "aws" {
 
 resource "aws_key_pair" "my_key" {
   key_name   = "my-key"
-  public_key = file("terraformAWS/pub-key/my_ssh_key.pub") 
+  public_key = file("/pub-key/my_ssh_key.pub") 
 }
 
 resource "aws_vpc" "my_vpc" {
