@@ -21,33 +21,33 @@ pipeline {
             }
         }
 
-        stage('Apply Terraform') {
-            steps {
-                dir("${TERRAFORM_DIR}") {
-                    sh 'terraform apply -auto-approve'
-                }
-            }
-        }
+        // stage('Apply Terraform') {
+        //     steps {
+        //         dir("${TERRAFORM_DIR}") {
+        //             sh 'terraform apply -auto-approve'
+        //         }
+        //     }
+        // }
 
-        stage('Save Terraform Outputs') {
-            steps {
-                dir("${TERRAFORM_DIR}") { 
-                    sh 'terraform output -json > outputs.json'
-                }
-            }
-        }
+        // stage('Save Terraform Outputs') {
+        //     steps {
+        //         dir("${TERRAFORM_DIR}") { 
+        //             sh 'terraform output -json > outputs.json'
+        //         }
+        //     }
+        // }
 
-        stage('Show Terraform Outputs') {
-            steps {
-                dir("${TERRAFORM_DIR}") {
-                    sh 'cat outputs.json'
-                }
-            }
-        }
+        // stage('Show Terraform Outputs') {
+        //     steps {
+        //         dir("${TERRAFORM_DIR}") {
+        //             sh 'cat outputs.json'
+        //         }
+        //     }
+        // }
 
         stage('Show files') {
             steps {
-                sh 'ls'
+                sh 'ansible --version'
             }
         }
 
