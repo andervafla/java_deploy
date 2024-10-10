@@ -1,0 +1,73 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install PostgreSQL
+  apt:
+    name: postgresql
+    state: present
+
+- name: Ensure PostgreSQL is running
+  systemd:
+    name: postgresql
+    enabled: yes
+    state: started
+
+- name: Install GNU GPG (required for MongoDB key)
+  apt:
+    name: gnupg
+    state: present
+
+- name: Download MongoDB GPG key (version 7.0) using curl
+  command: curl -fsSL https://pgp.mongodb.com/server-7.0.asc -o /usr/share/keyrings/mongodb-server-7.0.asc
+  args:
+    warn: false
+
+- name: Add MongoDB GPG key to apt keyring
+  command: apt-key add /usr/share/keyrings/mongodb-server-7.0.asc
+  args:
+    warn: false
+
+- name: Add MongoDB repository
+  apt_repository:
+    repo: "deb [ arch=amd64, signed-by=/usr/share/keyrings/mongodb-server-7.0.asc ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/7.0 multiverse"
+    state: present
+
+- name: Download libssl1.1 package from alternative source
+  command: wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+
+- name: Install libssl1.1
+  apt:
+    deb: "./libssl1.1_1.1.1f-1ubuntu2_amd64.deb"
+
+- name: Install libssl3 (нові версії)
+  apt:
+    name: libssl3
+    state: present
+
+- name: Update apt cache again to include MongoDB
+  apt:
+    update_cache: yes
+
+- name: Install MongoDB
+  apt:
+    name: mongodb-org
+    state: present
+
+- name: Ensure MongoDB is running
+  systemd:
+    name: mongod
+    enabled: yes
+    state: started
+
+- name: Install Redis
+  apt:
+    name: redis-server
+    state: present
+
+- name: Ensure Redis is running
+  systemd:
+    name: redis-server
+    enabled: yes
+    state: started

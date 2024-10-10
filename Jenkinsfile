@@ -29,6 +29,22 @@ pipeline {
             }
         }
 
+        stage('Save Terraform Outputs') {
+            steps {
+                dir("${TERRAFORM_DIR}") { 
+                    sh 'terraform output -json > outputs.json'
+                }
+            }
+        }
+
+        stage('Show Terraform Outputs') {
+            steps {
+                dir("${TERRAFORM_DIR}") {
+                    sh 'cat outputs.json'
+                }
+            }
+        }
+
         stage('Show files') {
             steps {
                 sh 'ls'
