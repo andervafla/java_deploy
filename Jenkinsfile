@@ -5,7 +5,7 @@ pipeline {
         GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
         FRONTEND_DIR = 'frontend'
         TERRAFORM_DIR = 'TerraformAWS'
-        ANSIBLE_DIR = 'TerraformAWS/Ansible' // Додано
+        ANSIBLE_DIR = 'TerraformAWS/Ansible' 
         GRADLE_VERSION = '7.2' 
         GRADLE_HOME = "${env.WORKSPACE}/gradle"  
         GRADLE_BIN = "${GRADLE_HOME}/gradle-${GRADLE_VERSION}/bin" 
@@ -115,7 +115,7 @@ pipeline {
             }
         }
 
-        stage('Create Ansible Vars') { // Переміщена в блок stages
+        stage('Create Ansible Vars') { 
             steps {
                 dir("${ANSIBLE_DIR}") {
                     script {
@@ -150,14 +150,6 @@ database_ip: ${output.database_public_ip.value}
         }
         failure {
             echo 'Pipeline failed. Check the logs.'
-        }
-
-        cleanup {
-            steps {
-                dir("${TERRAFORM_DIR}") {
-                    sh 'terraform destroy -auto-approve'
-                }
-            }
         }
     }
 }
