@@ -1,0 +1,85 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install OpenJDK
+  apt:
+    name: openjdk-11-jdk
+    state: present
+
+- name: Download Tomcat
+  get_url:
+    url: "http://dlcdn.apache.org/tomcat/tomcat-9/v9.0.95/bin/apache-tomcat-9.0.95.tar.gz"
+    dest: /opt/apache-tomcat-9.0.95.tar.gz
+    validate_certs: no
+
+- name: Extract Tomcat
+  unarchive:
+    src: /opt/apache-tomcat-9.0.95.tar.gz
+    dest: /opt/
+    remote_src: yes
+
+- name: Configure Tomcat Users
+  template:
+    src: tomcat-users.xml.j2
+    dest: /opt/apache-tomcat-9.0.95/conf/tomcat-users.xml
+
+- name: Create Tomcat service file
+  copy:
+    dest: /etc/systemd/system/tomcat.service
+    content: |
+      [Unit]
+      Description=Apache Tomcat Web Application Container
+      After=network.target
+
+      [Service]
+      Type=forking
+      User=root
+      Group=root
+      ExecStart=/opt/apache-tomcat-9.0.95/bin/startup.sh
+      ExecStop=/opt/apache-tomcat-9.0.95/bin/shutdown.sh
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start Tomcat Service
+  systemd:
+    name: tomcat
+    state: started
+    enabled: yes
+
+- name: Install Git
+  apt:
+    name: git
+    state: present
+
+- name: Clone the repository
+  git:
+    repo: https://github.com/andervafla/java_deploy.git
+    dest: /opt/java_deploy
+    version: main
+
+- name: Copy WAR file to Tomcat as ROOT.war
+  copy:
+    src: /java_deploy/build/libs/class_schedule.war
+    dest: /opt/apache-tomcat-9.0.95/webapps/ROOT.war
+    remote_src: yes
+
+- name: Change ownership of Tomcat directory
+  file:
+    path: /opt/apache-tomcat-9.0.95
+    owner: root
+    group: www-data
+    mode: '0755'
+    recurse: yes
+
+- name: Restart Tomcat Service to deploy the new application
+  systemd:
+    name: tomcat
+    state: restarted

@@ -14,20 +14,9 @@
     enabled: yes
     state: started
 
-- name: Install Git
-  apt:
-    name: git
-    state: present
-
-- name: Clone the repository
-  git:
-    repo: https://github.com/andervafla/java_deploy.git
-    dest: /var/www/java_deploy
-    version: main
-
 - name: Copy React build files to Nginx web root
   copy:
-    src: /var/www/java_deploy/frontend/build/
+    src: /java_deploy/frontend/build/  
     dest: /var/www/html/
     owner: www-data
     group: www-data
