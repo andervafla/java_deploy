@@ -21,29 +21,29 @@ pipeline {
             }
         }
 
-        // stage('Apply Terraform') {
-        //     steps {
-        //         dir("${TERRAFORM_DIR}") {
-        //             sh 'terraform apply -auto-approve'
-        //         }
-        //     }
-        // }
+        stage('Apply Terraform') {
+            steps {
+                dir("${TERRAFORM_DIR}") {
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
 
-        // stage('Save Terraform Outputs') {
-        //     steps {
-        //         dir("${TERRAFORM_DIR}") { 
-        //             sh 'terraform output -json > outputs.json'
-        //         }
-        //     }
-        // }
+        stage('Save Terraform Outputs') {
+            steps {
+                dir("${TERRAFORM_DIR}") { 
+                    sh 'terraform output -json > outputs.json'
+                }
+            }
+        }
 
-        // stage('Show Terraform Outputs') {
-        //     steps {
-        //         dir("${TERRAFORM_DIR}") {
-        //             sh 'cat outputs.json'
-        //         }
-        //     }
-        // }
+        stage('Show Terraform Outputs') {
+            steps {
+                dir("${TERRAFORM_DIR}") {
+                    sh 'cat outputs.json'
+                }
+            }
+        }
         stage('Install Ansible') {
             steps {
                 script {
@@ -109,6 +109,32 @@ pipeline {
                 script {
                     env.PATH = "${GRADLE_BIN}:${env.PATH}"
                     sh 'gradle build -x test --no-daemon'
+                }
+            }
+        }
+    }
+
+    stage('Create Ansible Vars') {
+            steps {
+                dir("${ANSIBLE_DIR}") {
+                    script {
+                        def output = readJSON file: '../TerraformAWS/outputs.json'
+                        def varsContent = """
+ssh_key_path: /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key
+frontend_ip: ${output.frontend_public_ip.value}
+backend_ip: ${output.backend_public_ip.value}
+database_ip: ${output.database_public_ip.value}
+"""
+                        writeFile file: 'vars.yml', text: varsContent
+                    }
+                }
+            }
+        }
+
+        stage('Run Ansible Playbook') {
+            steps {
+                dir("${ANSIBLE_DIR}") {
+                    sh 'ansible-playbook playbook.yml -e @vars.yml'
                 }
             }
         }
