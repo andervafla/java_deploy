@@ -59,15 +59,9 @@
     name: git
     state: present
 
-- name: Clone the repository
-  git:
-    repo: https://github.com/andervafla/java_deploy.git
-    dest: /opt/java_deploy
-    version: main
-
 - name: Copy WAR file to Tomcat as ROOT.war
   copy:
-    src: /java_deploy/build/libs/class_schedule.war
+    src: /home/jenkins/workspace/java-pipeline/
     dest: /opt/apache-tomcat-9.0.95/webapps/ROOT.war
     remote_src: yes
 
