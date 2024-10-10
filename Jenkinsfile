@@ -5,6 +5,7 @@ pipeline {
         GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
         FRONTEND_DIR = 'frontend'
         TERRAFORM_DIR = 'TerraformAWS'
+        ANSIBLE_DIR = 'TerraformAWS/Ansible' // Додано
         GRADLE_VERSION = '7.2' 
         GRADLE_HOME = "${env.WORKSPACE}/gradle"  
         GRADLE_BIN = "${GRADLE_HOME}/gradle-${GRADLE_VERSION}/bin" 
@@ -44,6 +45,7 @@ pipeline {
                 }
             }
         }
+
         stage('Install Ansible') {
             steps {
                 script {
@@ -57,7 +59,7 @@ pipeline {
             }
         }
 
-        stage('Show files') {
+        stage('Show Ansible Version') {
             steps {
                 sh 'ansible --version'
             }
@@ -112,9 +114,8 @@ pipeline {
                 }
             }
         }
-    }
 
-    stage('Create Ansible Vars') {
+        stage('Create Ansible Vars') { // Переміщена в блок stages
             steps {
                 dir("${ANSIBLE_DIR}") {
                     script {
