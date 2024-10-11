@@ -1,5 +1,5 @@
 ssh_key_path: /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key
 
-frontend_ip: 
-backend_ip: 
-database_ip: 
+frontend_ip: 98.81.218.231
+backend_ip: 3.89.225.76 
+database_ip: 98.81.129.52
