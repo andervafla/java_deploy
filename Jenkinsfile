@@ -119,12 +119,13 @@ pipeline {
             steps {
                 dir("${ANSIBLE_DIR}") {
                     script {
-                        def output = readJSON file: '../TerraformAWS/outputs.json'
+                        def output = readJSON file: '/home/jenkins/workspace/java-pipeline/TerraformAWS/outputs.json'
                         def varsContent = """
-ssh_key_path: /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key
+ssh_key_path: /home/jenkins/workspace/java-pipeline/TerraformAWS/key/my_ssh_key
 frontend_ip: ${output.frontend_public_ip.value}
 backend_ip: ${output.backend_public_ip.value}
 database_ip: ${output.database_public_ip.value}
+echo readFile('vars.yml')
 """
                         writeFile file: 'vars.yml', text: varsContent
                     }
