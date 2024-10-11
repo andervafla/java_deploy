@@ -119,15 +119,22 @@ pipeline {
             steps {
                 dir("${ANSIBLE_DIR}") {
                     script {
-                        def output = readJSON file: '/home/jenkins/workspace/java-pipeline/TerraformAWS/outputs.json'
+                        def outputFile = "${TERRAFORM_DIR}/outputs.json"
+                        
+                        if (!fileExists(outputFile)) {
+                            error "File outputs.json does not exist!"
+                        }
+                        
+                        def output = readJSON file: outputFile
                         def varsContent = """
 ssh_key_path: /home/jenkins/workspace/java-pipeline/TerraformAWS/key/my_ssh_key
 frontend_ip: ${output.frontend_public_ip.value}
 backend_ip: ${output.backend_public_ip.value}
 database_ip: ${output.database_public_ip.value}
-echo readFile('vars.yml')
 """
                         writeFile file: 'vars.yml', text: varsContent
+                        
+                        echo readFile('vars.yml')
                     }
                 }
             }
