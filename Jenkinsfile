@@ -149,7 +149,12 @@ database_ip: ${output.database_public_ip.value}
             echo 'Pipeline completed successfully.'
         }
         failure {
-            echo 'Pipeline failed. Check the logs.'
+            script {
+                echo 'Pipeline failed. Attempting to destroy Terraform resources.'
+                dir("${TERRAFORM_DIR}") {
+                    sh 'terraform destroy -auto-approve'
+                }
+            }
         }
     }
 }
