@@ -115,38 +115,38 @@ pipeline {
             }
         }
 
-//         stage('Create Ansible Vars') { 
-//             steps {
-//                 dir("${ANSIBLE_DIR}") {
-//                     script {
-//                         def outputFile = "${TERRAFORM_DIR}/outputs.json"
+        // stage('Create Ansible Vars') { 
+        //     steps {
+        //         dir("${ANSIBLE_DIR}") {
+        //             script {
+        //                 def outputFile = "${TERRAFORM_DIR}/outputs.json"
                         
-//                         if (!fileExists(outputFile)) {
-//                             error "File outputs.json does not exist!"
-//                         }
+        //                 if (!fileExists(outputFile)) {
+        //                     error "File outputs.json does not exist!"
+        //                 }
                         
-//                         def output = readJSON file: outputFile
-//                         def varsContent = """
-// ssh_key_path: /home/jenkins/workspace/java-pipeline/TerraformAWS/key/my_ssh_key
-// frontend_ip: ${output.frontend_public_ip.value}
-// backend_ip: ${output.backend_public_ip.value}
-// database_ip: ${output.database_public_ip.value}
-// """
-//                         writeFile file: 'vars.yml', text: varsContent
+        //                 def output = readJSON file: outputFile
+        //                 def varsContent = """
+        // ssh_key_path: /home/jenkins/workspace/java-pipeline/TerraformAWS/key/my_ssh_key
+        // frontend_ip: ${output.frontend_public_ip.value}
+        // backend_ip: ${output.backend_public_ip.value}
+        // database_ip: ${output.database_public_ip.value}
+        // """
+        //                 writeFile file: 'vars.yml', text: varsContent
                         
-//                         echo readFile('vars.yml')
-//                     }
-//                 }
-//             }
-//         }
+        //                 echo readFile('vars.yml')
+        //             }
+        //         }
+        //     }
+        // }
 
-        
-    stage('Run Ansible Playbook') {
+        stage('Run Ansible Playbook') {
             steps {
                 dir("${ANSIBLE_DIR}") {
-                script {
-                    sshagent (credentials: ['my-ssh-key']) {
-                        sh 'ansible-playbook -i inventory.yml playbook.yml'
+                    script {
+                        sshagent (credentials: ['my-ssh-key']) {
+                            sh 'ansible-playbook -i inventory.yml playbook.yml'
+                        }
                     }
                 }
             }
