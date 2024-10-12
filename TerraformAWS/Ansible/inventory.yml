@@ -1,21 +1,21 @@
 all:
   hosts:
     frontend:
-      ansible_host: 54.242.182.168
+      ansible_host: 34.201.135.178
       ansible_user: ubuntu
       ansible_ssh_private_key_file: /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key
       ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
 
     backend:
-      ansible_host: 54.221.129.148
+      ansible_host: 50.19.171.226
       ansible_user: ubuntu
       ansible_ssh_private_key_file: /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key
       ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
 
     database:
-      ansible_host: 3.88.156.214
+      ansible_host: 54.87.63.81
       ansible_user: ubuntu
       ansible_ssh_private_key_file: /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key
       ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
