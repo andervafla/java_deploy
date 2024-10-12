@@ -146,7 +146,7 @@ stage('Export SSH Key from Credentials') {
         dir("${TERRAFORM_DIR}") {
             script {
                 sh "mkdir -p ${env.WORKSPACE}/key"
-                withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_KEY_FILE')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'my_ssh_key', keyFileVariable: 'SSH_KEY_FILE')]) {
                     sh "cp ${SSH_KEY_FILE} ${env.WORKSPACE}/key/my_ssh_key"
                     sh "chmod 600 ${env.WORKSPACE}/key/my_ssh_key" 
                     echo "SSH key exported to ${env.WORKSPACE}/key/my_ssh_key."
