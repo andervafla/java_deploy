@@ -61,9 +61,9 @@
 
 - name: Copy WAR file to Tomcat as ROOT.war
   copy:
-    src: /home/jenkins/workspace/java-pipeline/
+    src: /home/jenkins/workspace/java-pipeline/build/libs/class_schedule.war
     dest: /opt/apache-tomcat-9.0.95/webapps/ROOT.war
-    remote_src: yes
+    remote_src: no
 
 - name: Change ownership of Tomcat directory
   file:
