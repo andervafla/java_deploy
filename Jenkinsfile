@@ -160,7 +160,7 @@ stage('Export SSH Key from Credentials') {
             steps {
                 dir("${ANSIBLE_DIR}") {
                     script {
-                        sshagent (credentials: ['my-ssh-key']) {
+                        sshagent (credentials: ['my_ssh_key']) {
                             sh 'ansible-playbook -i inventory.yml playbook.yml'
                         }
                     }
