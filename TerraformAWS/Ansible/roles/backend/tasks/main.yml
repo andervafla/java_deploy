@@ -10,20 +10,20 @@
 
 - name: Download Tomcat
   get_url:
-    url: "http://dlcdn.apache.org/tomcat/tomcat-9/v9.0.95/bin/apache-tomcat-9.0.95.tar.gz"
-    dest: /opt/apache-tomcat-9.0.95.tar.gz
+    url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.96/bin/apache-tomcat-9.0.96.tar.gz"
+    dest: /opt/apache-tomcat-9.0.96.tar.gz
     validate_certs: no
 
 - name: Extract Tomcat
   unarchive:
-    src: /opt/apache-tomcat-9.0.95.tar.gz
+    src: /opt/apache-tomcat-9.0.96.tar.gz
     dest: /opt/
     remote_src: yes
 
 - name: Configure Tomcat Users
   template:
     src: tomcat-users.xml.j2
-    dest: /opt/apache-tomcat-9.0.95/conf/tomcat-users.xml
+    dest: /opt/apache-tomcat-9.0.96/conf/tomcat-users.xml
 
 - name: Create Tomcat service file
   copy:
@@ -37,8 +37,8 @@
       Type=forking
       User=root
       Group=root
-      ExecStart=/opt/apache-tomcat-9.0.95/bin/startup.sh
-      ExecStop=/opt/apache-tomcat-9.0.95/bin/shutdown.sh
+      ExecStart=/opt/apache-tomcat-9.0.96/bin/startup.sh
+      ExecStop=/opt/apache-tomcat-9.0.96/bin/shutdown.sh
       Restart=on-failure
 
       [Install]
