@@ -141,19 +141,20 @@ pipeline {
         //     }
         // }
 
-        stage('Export SSH Key from Credentials') {
-            steps {
-                 dir("${TERRAFORM_DIR}") {
-                script {
-                    sh "mkdir -p ${env.WORKSPACE}/key"
-                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_KEY_FILE')]) {
-                        sh "cat ${SSH_KEY_FILE} > ${SSH_KEY_PATH}"
-                        echo "SSH key exported to ${SSH_KEY_PATH}."
-                    }
+stage('Export SSH Key from Credentials') {
+    steps {
+        dir("${TERRAFORM_DIR}") {
+            script {
+                sh "mkdir -p ${env.WORKSPACE}/key"
+                withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_KEY_FILE')]) {
+                    sh "cp ${SSH_KEY_FILE} ${env.WORKSPACE}/key/my_ssh_key"
+                    sh "chmod 600 ${env.WORKSPACE}/key/my_ssh_key" 
+                    echo "SSH key exported to ${env.WORKSPACE}/key/my_ssh_key."
                 }
-             }
+            }
         }
     }
+}
 
         stage('Run Ansible Playbook') {
             steps {
