@@ -110,7 +110,7 @@ pipeline {
         stage('List Files') {
             steps {
                 dir("${FRONTEND_DIR}") {
-                    sh 'ls -la frontend'
+                    sh 'ls -la'
                 }
             }
         }
