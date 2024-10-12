@@ -90,22 +90,22 @@ pipeline {
         //     }
         // }
 
-        // stage('Navigate to Frontend Directory') {
-        //     steps {
-        //         dir("${FRONTEND_DIR}") {
-        //             sh 'ls -la'
-        //         }
-        //     }
-        // }
+        stage('Navigate to Frontend Directory') {
+            steps {
+                dir("${FRONTEND_DIR}") {
+                    sh 'ls -la'
+                }
+            }
+        }
 
-        // stage('Build Frontend') {
-        //     steps {
-        //         dir("${FRONTEND_DIR}") {
-        //             sh 'npm install'
-        //             sh 'npm run build'
-        //         }
-        //     }
-        // }
+        stage('Build Frontend') {
+            steps {
+                dir("${FRONTEND_DIR}") {
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
+            }
+        }
 
         // stage('Build Backend') {
         //     steps {
