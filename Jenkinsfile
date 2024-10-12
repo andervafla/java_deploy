@@ -140,14 +140,7 @@ pipeline {
 //             }
 //         }
 
-        stage('Run Ansible Playbook') {
-            steps {
-                dir("${ANSIBLE_DIR}") {
-                    sh 'ansible-playbook -i inventory.yml playbook.yml'
-                }
-            }
-        }
-    }
+        
     stage('Run Ansible Playbook') {
             steps {
                 dir("${ANSIBLE_DIR}") {
