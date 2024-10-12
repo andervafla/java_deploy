@@ -107,6 +107,13 @@ pipeline {
             }
         }
 
+        stage('List Files') {
+            steps {
+                dir("${FRONTEND_DIR}") {
+                    sh 'ls -la frontend'
+                }
+            }
+        }
         // stage('Build Backend') {
         //     steps {
         //         script {
