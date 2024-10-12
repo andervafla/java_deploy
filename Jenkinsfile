@@ -114,6 +114,12 @@ pipeline {
                 }
             }
         }
+        stage('Check Build Files') {
+            steps {
+                sh 'ls -la /home/jenkins/workspace/java-pipeline/frontend/build'
+            }
+        }
+
         // stage('Build Backend') {
         //     steps {
         //         script {
