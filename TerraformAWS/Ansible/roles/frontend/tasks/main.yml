@@ -16,12 +16,12 @@
 
 - name: Copy React build files to Nginx web root
   copy:
-    src: /home/jenkins/workspace/java-pipeline/frontend/build/  
+    src: /home/jenkins/workspace/java-pipeline/frontend/build/
     dest: /var/www/html/
     owner: www-data
     group: www-data
     mode: '0755'
-    remote_src: yes
+    remote_src: no 
 
 - name: Configure Nginx to serve React app
   copy:
