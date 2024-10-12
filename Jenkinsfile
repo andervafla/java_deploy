@@ -148,6 +148,17 @@ pipeline {
             }
         }
     }
+    stage('Run Ansible Playbook') {
+            steps {
+                dir("${ANSIBLE_DIR}") {
+                script {
+                    sshagent (credentials: ['my-ssh-key']) {
+                        sh 'ansible-playbook -i inventory.yml playbook.yml'
+                    }
+                }
+            }
+        }
+    }
 
     post {
         always {
