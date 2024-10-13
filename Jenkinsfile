@@ -31,6 +31,21 @@ pipeline {
             }
         }
 
+         stage('Retrieve Terraform Outputs') {
+            steps {
+                dir("${TERRAFORM_DIR}") {
+                    script {
+                        def frontend_ip = sh(returnStdout: true, script: "terraform output -raw frontend_public_ip").trim()
+                        def backend_ip = sh(returnStdout: true, script: "terraform output -raw backend_public_ip").trim()
+                        def database_ip = sh(returnStdout: true, script: "terraform output -raw database_public_ip").trim()
+
+                        env.FRONTEND_IP = frontend_ip
+                        env.BACKEND_IP = backend_ip
+                        env.DATABASE_IP = database_ip
+                    }
+                }
+            }
+        }
 
         stage('Install Ansible') {
             steps {
@@ -48,12 +63,6 @@ pipeline {
         stage('Show Ansible Version') {
             steps {
                 sh 'ansible --version'
-            }
-        }
-
-        stage('List Files in Root Directory') {
-            steps {
-                sh 'ls -la'
             }
         }
 
@@ -145,7 +154,7 @@ pipeline {
                 dir("${ANSIBLE_DIR}") {
                     script {
                         sshagent (credentials: ['my_ssh_key']) {
-                            sh 'ansible-playbook -i /home/jenkins/workspace/java-pipeline/terraformAWS/inventory.yml playbook.yml'
+                            sh 'ansible-playbook -i inventory.yml playbook.yml'
                         }
                     }
                 }

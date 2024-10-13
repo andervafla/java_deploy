@@ -37,7 +37,6 @@ resource "aws_instance" "database" {
   }
 }
 
-# Outputs for public IP addresses
 output "frontend_public_ip" {
   value = aws_instance.frontend.public_ip
 }
@@ -48,44 +47,4 @@ output "backend_public_ip" {
 
 output "database_public_ip" {
   value = aws_instance.database.public_ip
-}
-
-# Створення Ansible інвентарного файлу
-resource "local_file" "ansible_inventory" {
-  content = <<EOT
-all:
-  hosts:
-    frontend:
-      ansible_host: ${aws_instance.frontend.public_ip}
-      ansible_user: ubuntu
-      ansible_ssh_private_key_file: /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key
-      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-
-    backend:
-      ansible_host: ${aws_instance.backend.public_ip}
-      ansible_user: ubuntu
-      ansible_ssh_private_key_file: /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key
-      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-
-    database:
-      ansible_host: ${aws_instance.database.public_ip}
-      ansible_user: ubuntu
-      ansible_ssh_private_key_file: /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key
-      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-
-  children:
-    frontend_group:
-      hosts:
-        frontend
-
-    backend_group:
-      hosts:
-        backend
-
-    database_group:
-      hosts:
-        database
-EOT
-
-  filename = "${path.module}/inventory.yml"
 }
