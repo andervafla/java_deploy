@@ -47,6 +47,16 @@ pipeline {
             }
         }
 
+    stage('Update .env File') {
+        steps {
+            script {
+                def envFilePath = 'path/to/your/.env'  
+                def newEnvContent = "REACT_APP_API_BASE_URL=http://${env.FRONTEND_IP}:8080/"
+                writeFile(file: envFilePath, text: newEnvContent)
+            }
+        }
+    }
+
         stage('Install Ansible') {
             steps {
                 script {
@@ -84,35 +94,35 @@ pipeline {
         //     }
         // }
 
-        // stage('Navigate to Frontend Directory') {
-        //     steps {
-        //         dir("${FRONTEND_DIR}") {
-        //             sh 'ls -la'
-        //         }
-        //     }
-        // }
+        stage('Navigate to Frontend Directory') {
+            steps {
+                dir("${FRONTEND_DIR}") {
+                    sh 'ls -la'
+                }
+            }
+        }
 
-        // stage('Build Frontend') {
-        //     steps {
-        //         dir("${FRONTEND_DIR}") {
-        //             sh 'npm install'
-        //             sh 'npm run build'
-        //         }
-        //     }
-        // }
+        stage('Build Frontend') {
+            steps {
+                dir("${FRONTEND_DIR}") {
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
+            }
+        }
 
-        // stage('List Files') {
-        //     steps {
-        //         dir("${FRONTEND_DIR}") {
-        //             sh 'ls -la'
-        //         }
-        //     }
-        // }
-        // stage('Check Build Files') {
-        //     steps {
-        //         sh 'ls -la /home/jenkins/workspace/java-pipeline/frontend/build'
-        //     }
-        // }
+        stage('List Files') {
+            steps {
+                dir("${FRONTEND_DIR}") {
+                    sh 'ls -la'
+                }
+            }
+        }
+        stage('Check Build Files') {
+            steps {
+                sh 'ls -la /home/jenkins/workspace/java-pipeline/frontend/build'
+            }
+        }
 
         // stage('Build Backend') {
         //     steps {
