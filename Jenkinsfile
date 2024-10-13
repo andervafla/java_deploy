@@ -47,16 +47,17 @@ pipeline {
             }
         }
 
-  stage('Update .env File') {
-    steps {
-        script {
-            def envFilePath = '/home/jenkins/workspace/java-pipeline/frontend/.env'
-            def newEnvContent = "REACT_APP_API_BASE_URL=http://${env.FRONTEND_IP}:8080/\n" // Додаємо новий рядок
-            writeFile(file: envFilePath, text: newEnvContent)
-            echo "Updated .env content: ${newEnvContent}" // Виводимо новий вміст для перевірки
+ stage('Update .env File') {
+            steps {
+                script {
+                    def envFilePath = '/home/jenkins/workspace/java-pipeline/frontend/.env'
+                    // Використовуємо backend_ip для REACT_APP_API_BASE_URL
+                    def newEnvContent = "REACT_APP_API_BASE_URL=http://${env.BACKEND_IP}:8080/\n"
+                    writeFile(file: envFilePath, text: newEnvContent)
+                    echo "Updated .env content: ${newEnvContent}" // Виводимо новий вміст для перевірки
+                }
+            }
         }
-    }
-}}
 
         stage('Install Ansible') {
             steps {
