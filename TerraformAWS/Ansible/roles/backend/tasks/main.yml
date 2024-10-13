@@ -59,6 +59,11 @@
     name: git
     state: present
 
+- name: Remove ROOT folder
+  file:
+    path: /opt/apache-tomcat-9.0.96/webapps/ROOT
+    state: absent
+
 - name: Copy WAR file to Tomcat as ROOT.war
   copy:
     src: /home/jenkins/workspace/java-pipeline/build/libs/class_schedule.war
