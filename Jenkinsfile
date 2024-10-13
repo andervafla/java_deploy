@@ -13,39 +13,24 @@ pipeline {
     }
 
     stages {
-        // stage('Initialize Terraform') {
-        //     steps {
-        //         dir("${TERRAFORM_DIR}") {
-        //             script {
-        //                 sh 'terraform init'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Initialize Terraform') {
+            steps {
+                dir("${TERRAFORM_DIR}") {
+                    script {
+                        sh 'terraform init'
+                    }
+                }
+            }
+        }
 
-        // stage('Apply Terraform') {
-        //     steps {
-        //         dir("${TERRAFORM_DIR}") {
-        //             sh 'terraform apply -auto-approve'
-        //         }
-        //     }
-        // }
+        stage('Apply Terraform') {
+            steps {
+                dir("${TERRAFORM_DIR}") {
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
 
-        // stage('Save Terraform Outputs') {
-        //     steps {
-        //         dir("${TERRAFORM_DIR}") { 
-        //             sh 'terraform output -json > outputs.json'
-        //         }
-        //     }
-        // }
-
-        // stage('Show Terraform Outputs') {
-        //     steps {
-        //         dir("${TERRAFORM_DIR}") {
-        //             sh 'cat outputs.json'
-        //         }
-        //     }
-        // }
 
         stage('Install Ansible') {
             steps {
@@ -160,7 +145,7 @@ pipeline {
                 dir("${ANSIBLE_DIR}") {
                     script {
                         sshagent (credentials: ['my_ssh_key']) {
-                            sh 'ansible-playbook -i inventory.yml playbook.yml'
+                            sh 'ansible-playbook -i /home/jenkins/workspace/java-pipeline/terraformAWS/inventory.yml playbook.yml'
                         }
                     }
                 }
