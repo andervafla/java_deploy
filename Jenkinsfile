@@ -50,7 +50,7 @@ pipeline {
     stage('Update .env File') {
         steps {
             script {
-                def envFilePath = 'path/to/your/.env'  
+                def envFilePath = '/home/jenkins/workspace/java-pipeline/frontend/.env'  
                 def newEnvContent = "REACT_APP_API_BASE_URL=http://${env.FRONTEND_IP}:8080/"
                 writeFile(file: envFilePath, text: newEnvContent)
             }
@@ -157,7 +157,6 @@ pipeline {
         //         }
         //     }
         // }
-
 
         stage('Run Ansible Playbook') {
             steps {
