@@ -74,11 +74,6 @@
     regexp: '^#?listen_addresses'
     line: "listen_addresses = '*'"
 
-- name: Restart PostgreSQL
-  systemd:
-    name: postgresql
-    state: restarted
-
 - name: Configure pg_hba.conf for remote access
   lineinfile:
     path: /etc/postgresql/14/main/pg_hba.conf
@@ -99,6 +94,11 @@
     path: /etc/redis/redis.conf
     regexp: '^#?bind'
     line: "bind 0.0.0.0"
+
+- name: Restart PostgreSQL
+  systemd:
+    name: postgresql
+    state: restarted
 
 - name: Restart Redis
   systemd:
