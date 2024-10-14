@@ -2,13 +2,13 @@ pipeline {
     agent { label 'jenks-node' }
 
     environment {
-        GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git'
+        GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
         FRONTEND_DIR = 'frontend'
         TERRAFORM_DIR = 'TerraformAWS'
-        ANSIBLE_DIR = 'TerraformAWS/Ansible'
-        GRADLE_VERSION = '7.2'
-        GRADLE_HOME = "${env.WORKSPACE}/gradle"
-        GRADLE_BIN = "${GRADLE_HOME}/gradle-${GRADLE_VERSION}/bin"
+        ANSIBLE_DIR = 'TerraformAWS/Ansible' 
+        GRADLE_VERSION = '7.2' 
+        GRADLE_HOME = "${env.WORKSPACE}/gradle"  
+        GRADLE_BIN = "${GRADLE_HOME}/gradle-${GRADLE_VERSION}/bin" 
         SSH_KEY_PATH = "${env.WORKSPACE}/key/my_ssh_key"
     }
 
@@ -31,7 +31,7 @@ pipeline {
             }
         }
 
-        stage('Retrieve Terraform Outputs') {
+         stage('Retrieve Terraform Outputs') {
             steps {
                 dir("${TERRAFORM_DIR}") {
                     script {
@@ -47,39 +47,54 @@ pipeline {
             }
         }
 
-        stage('Update .env File') {
+ stage('Update .env File') {
             steps {
                 script {
                     def envFilePath = '/home/jenkins/workspace/java-pipeline/frontend/.env'
                     def newEnvContent = "REACT_APP_API_BASE_URL=http://${env.BACKEND_IP}:8080/\n"
                     writeFile(file: envFilePath, text: newEnvContent)
-                    echo "Updated .env content: ${newEnvContent}"
+                    echo "Updated .env content: ${newEnvContent}" 
                 }
             }
         }
 
+// stage('Update Database IP in .env') {
+//     steps {
+//         script {
+//             def envFilePath = '/home/jenkins/workspace/java-pipeline/.env' 
+//             def newEnvContent = "IP_DB=${env.DATABASE_IP}\n" 
+//             writeFile(file: envFilePath, text: newEnvContent)
+//             echo "Updated .env content with IP_DB: ${newEnvContent}" 
+//         }
+//     }
+// }
+
+// stage('Display .env Content') {
+//     steps {
+//         script {
+//             def envFilePath = '/home/jenkins/workspace/java-pipeline/.env' 
+//             def envContent = readFile(envFilePath)
+//             echo "Current .env content:\n${envContent}"
+//         }
+//     }
+// }
 stage('Update hibernate.properties') {
     steps {
         script {
             def hibernateFilePath = '/home/jenkins/workspace/java-pipeline/src/main/resources/hibernate.properties'
-
             def hibernateContent = readFile(hibernateFilePath)
-            def updatedContent = hibernateContent.replaceAll(/hibernate.connection.url=.*?$/, "hibernate.connection.url=jdbc:postgresql://${env.DATABASE_IP}:5432/postgres_db")
+            
+            // Оновлення значення IP_DB
+            def updatedContent = hibernateContent.replaceAll(/hibernate.connection.url=jdbc:postgresql\$\{IP_DB\}:\d+\/postgres_db/, "hibernate.connection.url=jdbc:postgresql://${env.DATABASE_IP}:5432/postgres_db")
 
+            // Запис нового вмісту
             writeFile(file: hibernateFilePath, text: updatedContent)
+            echo "Updated hibernate.properties content with IP_DB: ${env.DATABASE_IP}"
         }
     }
 }
 
-        stage('Display hibernate.properties Content') {
-            steps {
-                script {
-                    def hibernateFilePath = '/home/jenkins/workspace/java-pipeline/src/main/resources/hibernate.properties'
-                    def hibernateContent = readFile(hibernateFilePath)
-                    echo "Current hibernate.properties content:\n${hibernateContent}"
-                }
-            }
-        }
+
 
         stage('Install Ansible') {
             steps {
@@ -142,7 +157,6 @@ stage('Update hibernate.properties') {
                 }
             }
         }
-
         stage('Check Build Files') {
             steps {
                 sh 'ls -la /home/jenkins/workspace/java-pipeline/frontend/build'
@@ -157,6 +171,31 @@ stage('Update hibernate.properties') {
                 }
             }
         }
+
+        // stage('Create Ansible Vars') { 
+        //     steps {
+        //         dir("${ANSIBLE_DIR}") {
+        //             script {
+        //                 def outputFile = "${TERRAFORM_DIR}/outputs.json"
+                        
+        //                 if (!fileExists(outputFile)) {
+        //                     error "File outputs.json does not exist!"
+        //                 }
+                        
+        //                 def output = readJSON file: outputFile
+        //                 def varsContent = """
+        // ssh_key_path: /home/jenkins/workspace/java-pipeline/TerraformAWS/key/my_ssh_key
+        // frontend_ip: ${output.frontend_public_ip.value}
+        // backend_ip: ${output.backend_public_ip.value}
+        // database_ip: ${output.database_public_ip.value}
+        // """
+        //                 writeFile file: 'vars.yml', text: varsContent
+                        
+        //                 echo readFile('vars.yml')
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Run Ansible Playbook') {
             steps {
