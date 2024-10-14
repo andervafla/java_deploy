@@ -72,23 +72,32 @@
     path: /etc/postgresql/14/main/postgresql.conf  # Змінено на версію 14
     regexp: '^#?listen_addresses'
     line: "listen_addresses = '*'"
-  notify: Restart PostgreSQL
+
+- name: Restart PostgreSQL
+  systemd:
+    name: postgresql
+    state: restarted
 
 - name: Configure pg_hba.conf for remote access
   lineinfile:
-    path: /etc/postgresql/14/main/pg_hba.conf 
+    path: /etc/postgresql/14/main/pg_hba.conf  # Змінено на версію 14
     line: "host    all             all             0.0.0.0/0         md5"
     state: present
-  notify: Restart PostgreSQL
 
-- name: Create PostgreSQL user and database
-  become: yes
+- name: Create PostgreSQL user
+  become: true
   become_user: postgres
   postgresql_user:
     name: postgres
     password: password
     priv: "ALL"
-    db: postgres_db
+    state: present
+
+- name: Create PostgreSQL database
+  become: true
+  become_user: postgres
+  postgresql_db:
+    name: postgres_db
     state: present
 
 - name: Configure Redis to bind to all addresses
@@ -96,12 +105,6 @@
     path: /etc/redis/redis.conf
     regexp: '^#?bind'
     line: "bind 0.0.0.0"
-  notify: Restart Redis
-
-- name: Restart PostgreSQL
-  systemd:
-    name: postgresql
-    state: restarted
 
 - name: Restart Redis
   systemd:
