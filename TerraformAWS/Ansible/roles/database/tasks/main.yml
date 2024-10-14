@@ -106,7 +106,5 @@
     state: restarted
 
 - name: Restart Tomcat on backend server
-  systemd:
-      name: tomcat
-      state: restarted
-      delegate_to: backend  
+  shell: ssh -i /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key ubuntu@{{ lookup('env', 'BACKEND_IP') }} "sudo systemctl restart tomcat"
+  register: restart_tomcat_result
