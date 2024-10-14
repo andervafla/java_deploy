@@ -58,19 +58,18 @@ pipeline {
             }
         }
 
-        stage('Update hibernate.properties') {
-            steps {
-                script {
-                    def hibernateFilePath = '/home/jenkins/workspace/java-pipeline/src/main/resources/hibernate.properties'
+stage('Update hibernate.properties') {
+    steps {
+        script {
+            def hibernateFilePath = '/home/jenkins/workspace/java-pipeline/src/main/resources/hibernate.properties'
 
-                    def hibernateContent = readFile(hibernateFilePath)
-                    def updatedContent = hibernateContent.replaceAll(/hibernate.connection.url=.*?$/, "hibernate.connection.url=jdbc:postgresql://${env.DATABASE_IP}:5432/postgres_db")
+            def hibernateContent = readFile(hibernateFilePath)
+            def updatedContent = hibernateContent.replaceAll(/hibernate.connection.url=.*?$/, "hibernate.connection.url=jdbc:postgresql://${env.DATABASE_IP}:5432/postgres_db")
 
-                    writeFile(file: hibernateFilePath, text: updatedContent)
-                    echo "Updated hibernate.properties content with IP_DB: ${env.DATABASE_IP}"
-                }
-            }
+            writeFile(file: hibernateFilePath, text: updatedContent)
         }
+    }
+}
 
         stage('Display hibernate.properties Content') {
             steps {
