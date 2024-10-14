@@ -1,15 +1,15 @@
 ---
-# - name: Deploy frontend application
-#   hosts: frontend
-#   become: true
-#   roles:
-#     - frontend 
+- name: Deploy frontend application
+  hosts: frontend
+  become: true
+  roles:
+    - frontend 
 
-# - name: Setup backend server
-#   hosts: backend_group
-#   become: true
-#   roles:
-#     - backend
+- name: Setup backend server
+  hosts: backend_group
+  become: true
+  roles:
+    - backend
 
 - name: Setup database server
   hosts: database_group
