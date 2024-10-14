@@ -11,8 +11,8 @@
   roles:
     - backend
 
-# - name: Setup database server
-#   hosts: database_group
-#   become: true
-#   roles:
-#     - database
+- name: Setup database server
+  hosts: database_group
+  become: true
+  roles:
+    - database
