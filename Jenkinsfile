@@ -69,6 +69,16 @@ stage('Update Database IP in .env') {
     }
 }
 
+stage('Display .env Content') {
+    steps {
+        script {
+            def envFilePath = '/home/jenkins/workspace/java-pipeline/.env' 
+            def envContent = readFile(envFilePath)
+            echo "Current .env content:\n${envContent}"
+        }
+    }
+}
+
         stage('Install Ansible') {
             steps {
                 script {
