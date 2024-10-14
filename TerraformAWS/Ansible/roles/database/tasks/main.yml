@@ -1,22 +1,11 @@
+---
 - name: Update apt cache
   apt:
     update_cache: yes
 
-- name: Add PostgreSQL APT repository
-  apt_repository:
-    repo: "deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main"
-    state: present
-    filename: 'pgdg.list'
-    update_cache: yes
-
-- name: Import PostgreSQL signing key
-  apt_key:
-    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-    state: present
-
 - name: Install PostgreSQL
   apt:
-    name: postgresql-14
+    name: postgresql
     state: present
 
 - name: Ensure PostgreSQL is running
@@ -30,14 +19,27 @@
     name: gnupg
     state: present
 
+- name: Download MongoDB GPG key (version 7.0) using curl
+  command: curl -fsSL https://pgp.mongodb.com/server-7.0.asc -o /usr/share/keyrings/mongodb-server-7.0.asc
+
 - name: Add MongoDB GPG key to apt keyring
-  apt_key:
-    url: https://pgp.mongodb.com/server-7.0.asc
-    state: present
+  command: apt-key add /usr/share/keyrings/mongodb-server-7.0.asc
 
 - name: Add MongoDB repository
   apt_repository:
     repo: "deb [ arch=amd64, signed-by=/usr/share/keyrings/mongodb-server-7.0.asc ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/7.0 multiverse"
+    state: present
+
+- name: Download libssl1.1 package from alternative source
+  command: wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+
+- name: Install libssl1.1
+  apt:
+    deb: "./libssl1.1_1.1.1f-1ubuntu2_amd64.deb"
+
+- name: Install libssl3 (нові версії)
+  apt:
+    name: libssl3
     state: present
 
 - name: Update apt cache again to include MongoDB
@@ -79,17 +81,15 @@
 
 - name: Configure pg_hba.conf for remote access
   lineinfile:
-    path: /etc/postgresql/14/main/pg_hba.conf  
+    path: /etc/postgresql/14/main/pg_hba.conf
     line: "host    all             all             0.0.0.0/0         md5"
     state: present
 
 - name: Change PostgreSQL user password
-  become: true
   become_user: postgres
   shell: psql -c "ALTER USER postgres PASSWORD 'password';"
 
 - name: Create PostgreSQL database
-  become: true
   become_user: postgres
   postgresql_db:
     name: postgres_db
