@@ -66,3 +66,44 @@
     name: redis-server
     enabled: yes
     state: started
+
+- name: Configure PostgreSQL to listen on all addresses
+  lineinfile:
+    path: /etc/postgresql/14/main/postgresql.conf  # Змінено на версію 14
+    regexp: '^#?listen_addresses'
+    line: "listen_addresses = '*'"
+  notify: Restart PostgreSQL
+
+- name: Configure pg_hba.conf for remote access
+  lineinfile:
+    path: /etc/postgresql/14/main/pg_hba.conf 
+    line: "host    all             all             0.0.0.0/0         md5"
+    state: present
+  notify: Restart PostgreSQL
+
+- name: Create PostgreSQL user and database
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name: postgres
+    password: password
+    priv: "ALL"
+    db: postgres_db
+    state: present
+
+- name: Configure Redis to bind to all addresses
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^#?bind'
+    line: "bind 0.0.0.0"
+  notify: Restart Redis
+
+- name: Restart PostgreSQL
+  systemd:
+    name: postgresql
+    state: restarted
+
+- name: Restart Redis
+  systemd:
+    name: redis-server
+    state: restarted
