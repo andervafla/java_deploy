@@ -91,6 +91,9 @@
 - name: Create PostgreSQL database
   shell: sudo -u postgres psql -c "CREATE DATABASE postgres_db;"
 
+- name: Allow PostgreSQL port through UFW
+  shell: sudo ufw allow 5432/tcp
+
 - name: Configure Redis to bind to all addresses
   lineinfile:
     path: /etc/redis/redis.conf
