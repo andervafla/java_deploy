@@ -88,6 +88,7 @@
 - name: Change PostgreSQL user password
   become: true
   become_user: postgres
+  become_method: su
   shell: psql -c "ALTER USER postgres PASSWORD 'password';"
 
 - name: Create PostgreSQL database
