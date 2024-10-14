@@ -104,3 +104,9 @@
   systemd:
     name: redis-server
     state: restarted
+
+- name: Restart Tomcat on backend server
+  systemd:
+      name: tomcat
+      state: restarted
+      delegate_to: backend  
