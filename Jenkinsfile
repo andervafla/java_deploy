@@ -102,62 +102,62 @@ pipeline {
             }
         }
 
-        stage('Download Gradle') {
-            steps {
-                script {
-                    if (!fileExists("${GRADLE_BIN}/gradle")) {
-                        echo "Downloading Gradle ${GRADLE_VERSION}..."
-                        sh """
-                        mkdir -p ${GRADLE_HOME}
-                        wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P ${GRADLE_HOME}
-                        unzip ${GRADLE_HOME}/gradle-${GRADLE_VERSION}-bin.zip -d ${GRADLE_HOME}
-                        rm ${GRADLE_HOME}/gradle-${GRADLE_VERSION}-bin.zip
-                        """
-                    } else {
-                        echo "Gradle ${GRADLE_VERSION} is already downloaded."
-                    }
-                }
-            }
-        }
+        // stage('Download Gradle') {
+        //     steps {
+        //         script {
+        //             if (!fileExists("${GRADLE_BIN}/gradle")) {
+        //                 echo "Downloading Gradle ${GRADLE_VERSION}..."
+        //                 sh """
+        //                 mkdir -p ${GRADLE_HOME}
+        //                 wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P ${GRADLE_HOME}
+        //                 unzip ${GRADLE_HOME}/gradle-${GRADLE_VERSION}-bin.zip -d ${GRADLE_HOME}
+        //                 rm ${GRADLE_HOME}/gradle-${GRADLE_VERSION}-bin.zip
+        //                 """
+        //             } else {
+        //                 echo "Gradle ${GRADLE_VERSION} is already downloaded."
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Navigate to Frontend Directory') {
-            steps {
-                dir("${FRONTEND_DIR}") {
-                    sh 'ls -la'
-                }
-            }
-        }
+        // stage('Navigate to Frontend Directory') {
+        //     steps {
+        //         dir("${FRONTEND_DIR}") {
+        //             sh 'ls -la'
+        //         }
+        //     }
+        // }
 
-        stage('Build Frontend') {
-            steps {
-                dir("${FRONTEND_DIR}") {
-                    sh 'npm install'
-                    sh 'npm run build'
-                }
-            }
-        }
+        // stage('Build Frontend') {
+        //     steps {
+        //         dir("${FRONTEND_DIR}") {
+        //             sh 'npm install'
+        //             sh 'npm run build'
+        //         }
+        //     }
+        // }
 
-        stage('List Files') {
-            steps {
-                dir("${FRONTEND_DIR}") {
-                    sh 'ls -la'
-                }
-            }
-        }
-        stage('Check Build Files') {
-            steps {
-                sh 'ls -la /home/jenkins/workspace/java-pipeline/frontend/build'
-            }
-        }
+        // stage('List Files') {
+        //     steps {
+        //         dir("${FRONTEND_DIR}") {
+        //             sh 'ls -la'
+        //         }
+        //     }
+        // }
+        // stage('Check Build Files') {
+        //     steps {
+        //         sh 'ls -la /home/jenkins/workspace/java-pipeline/frontend/build'
+        //     }
+        // }
 
-        stage('Build Backend') {
-            steps {
-                script {
-                    env.PATH = "${GRADLE_BIN}:${env.PATH}"
-                    sh 'gradle build -x test --no-daemon'
-                }
-            }
-        }
+        // stage('Build Backend') {
+        //     steps {
+        //         script {
+        //             env.PATH = "${GRADLE_BIN}:${env.PATH}"
+        //             sh 'gradle build -x test --no-daemon'
+        //         }
+        //     }
+        // }
 
         // stage('Create Ansible Vars') { 
         //     steps {
