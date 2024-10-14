@@ -89,10 +89,7 @@
   shell: sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'password';"
 
 - name: Create PostgreSQL database
-  become_user: postgres
-  postgresql_db:
-    name: postgres_db
-    state: present
+  shell: sudo -u postgres psql -c "CREATE DATABASE postgres_db;"
 
 - name: Configure Redis to bind to all addresses
   lineinfile:
