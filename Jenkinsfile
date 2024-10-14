@@ -58,26 +58,36 @@ pipeline {
             }
         }
 
-stage('Update Database IP in .env') {
-    steps {
-        script {
-            def envFilePath = '/home/jenkins/workspace/java-pipeline/.env' 
-            def newEnvContent = "IP_DB=${env.DATABASE_IP}\n" 
-            writeFile(file: envFilePath, text: newEnvContent)
-            echo "Updated .env content with IP_DB: ${newEnvContent}" 
+stage('Update hibernate.properties') {
+            steps {
+                script {
+                    def hibernateFilePath = '/home/jenkins/workspace/java-pipeline//src/main/resources/hibernate.properties'
+                    
+                    def hibernateContent = readFile(hibernateFilePath)
+                    
+
+                    def updatedContent = hibernateContent.replaceAll(/hibernate.connection.url=.*?$/, "hibernate.connection.url=jdbc:postgresql://${env.DATABASE_IP}:5432/postgres_db")
+                    
+
+                    writeFile(file: hibernateFilePath, text: updatedContent)
+                    echo "Updated hibernate.properties content with IP_DB: ${env.DATABASE_IP}"
+                }
+            }
+        }
+
+        stage('Display hibernate.properties Content') {
+            steps {
+                script {
+                    def hibernateFilePath = '/home/jenkins/workspace/java-pipeline/hibernate.properties'
+                    def hibernateContent = readFile(hibernateFilePath)
+                    echo "Current hibernate.properties content:\n${hibernateContent}"
+                }
+            }
         }
     }
 }
 
-stage('Display .env Content') {
-    steps {
-        script {
-            def envFilePath = '/home/jenkins/workspace/java-pipeline/.env' 
-            def envContent = readFile(envFilePath)
-            echo "Current .env content:\n${envContent}"
-        }
-    }
-}
+
 
         stage('Install Ansible') {
             steps {
