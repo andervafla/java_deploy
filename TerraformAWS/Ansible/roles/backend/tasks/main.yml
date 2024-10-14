@@ -40,6 +40,7 @@
       ExecStart=/opt/apache-tomcat-9.0.96/bin/startup.sh
       ExecStop=/opt/apache-tomcat-9.0.96/bin/shutdown.sh
       Restart=on-failure
+      Environment=DB_HOST={{ database_ip }}
 
       [Install]
       WantedBy=multi-user.target

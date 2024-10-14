@@ -58,6 +58,8 @@ pipeline {
             }
         }
 
+
+
 // stage('Update Database IP in .env') {
 //     steps {
 //         script {
@@ -78,33 +80,6 @@ pipeline {
 //         }
 //     }
 // }
-stage('Update hibernate.properties') {
-    steps {
-        script {
-            def hibernateFilePath = '/home/jenkins/workspace/java-pipeline/src/main/resources/hibernate.properties'
-            def hibernateContent = readFile(hibernateFilePath)
-            
-            // Оновлення значення IP_DB
-            def updatedContent = hibernateContent.replaceAll(/hibernate.connection.url=jdbc:postgresql\$\{IP_DB\}:\d+\/postgres_db/, "hibernate.connection.url=jdbc:postgresql://${env.DATABASE_IP}:5432/postgres_db")
-
-            // Запис нового вмісту
-            writeFile(file: hibernateFilePath, text: updatedContent)
-            echo "Updated hibernate.properties content with IP_DB: ${env.DATABASE_IP}"
-        }
-    }
-}
-
-stage('Display hibernate.properties Content') {
-    steps {
-        script {
-            def hibernateFilePath = '/home/jenkins/workspace/java-pipeline/src/main/resources/hibernate.properties'
-            def hibernateContent = readFile(hibernateFilePath)
-
-            // Виведення вмісту файлу hibernate.properties
-            echo "Current hibernate.properties content:\n${hibernateContent}"
-        }
-    }
-}
 
 
 
@@ -210,16 +185,20 @@ stage('Display hibernate.properties Content') {
         // }
 
         stage('Run Ansible Playbook') {
-            steps {
-                dir("${ANSIBLE_DIR}") {
-                    script {
-                        sshagent (credentials: ['my_ssh_key']) {
-                            sh 'ansible-playbook -i inventory.yml playbook.yml'
-                        }
-                    }
+    steps {
+        dir("${ANSIBLE_DIR}") {
+            script {
+                sshagent (credentials: ['my_ssh_key']) {
+                    sh """
+                        ansible-playbook -i inventory.yml playbook.yml \
+                        --extra-vars "database_ip=${DATABASE_IP}"
+                    """
                 }
             }
         }
+    }
+}
+
     }
 
     post {
