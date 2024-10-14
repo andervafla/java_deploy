@@ -82,7 +82,7 @@
 - name: Configure pg_hba.conf for remote access
   lineinfile:
     path: /etc/postgresql/14/main/pg_hba.conf
-    line: "host    all             all             0.0.0.0/0         md5"
+    line: "host    all             all             0.0.0.0/0           md5"
     state: present
 
 - name: Change PostgreSQL user password
