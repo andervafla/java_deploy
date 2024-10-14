@@ -58,6 +58,17 @@ pipeline {
             }
         }
 
+stage('Update Database IP in .env') {
+    steps {
+        script {
+            def envFilePath = '/home/jenkins/workspace/java-pipeline/.env' 
+            def newEnvContent = "IP_DB=${env.DATABASE_IP}\n" 
+            writeFile(file: envFilePath, text: newEnvContent)
+            echo "Updated .env content with IP_DB: ${newEnvContent}" 
+        }
+    }
+}
+
         stage('Install Ansible') {
             steps {
                 script {
