@@ -94,6 +94,18 @@ stage('Update hibernate.properties') {
     }
 }
 
+stage('Display hibernate.properties Content') {
+    steps {
+        script {
+            def hibernateFilePath = '/home/jenkins/workspace/java-pipeline/src/main/resources/hibernate.properties'
+            def hibernateContent = readFile(hibernateFilePath)
+
+            // Виведення вмісту файлу hibernate.properties
+            echo "Current hibernate.properties content:\n${hibernateContent}"
+        }
+    }
+}
+
 
 
         stage('Install Ansible') {
