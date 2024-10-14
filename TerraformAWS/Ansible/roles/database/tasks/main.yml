@@ -106,5 +106,10 @@
     state: restarted
 
 - name: Restart Tomcat on backend server
-  shell: ssh -i /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key ubuntu@{{ lookup('env', 'BACKEND_IP') }} "sudo systemctl restart tomcat"
+  command: ssh -o StrictHostKeyChecking=no -i /home/jenkins/workspace/java-pipeline/terraformAWS/key/my_ssh_key ubuntu@{{ lookup('env', 'BACKEND_IP') }} "sudo systemctl restart tomcat"
   register: restart_tomcat_result
+  ignore_errors: true  # Продовжити виконання, навіть якщо команда не вдасться
+
+- name: Display result of Tomcat restart
+  debug:
+    var: restart_tomcat_result
