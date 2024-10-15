@@ -113,8 +113,8 @@
 
 - name: Drop and recreate public schema in PostgreSQL
   shell: |
-    psql -U postgres -d postgres_db -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+    PGPASSWORD=password psql -U postgres -d postgres_db -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 
 - name: Restore PostgreSQL database from dump
   shell: |
-    psql -U postgres -d postgres_db -f /tmp/2024-08-19.dump
+    PGPASSWORD=password psql -U postgres -d postgres_db -f /tmp/2024-08-19.dump
