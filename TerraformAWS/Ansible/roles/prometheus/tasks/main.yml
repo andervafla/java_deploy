@@ -39,7 +39,7 @@
 
 - name: Move Prometheus config file
   copy:
-    src: /tmp/prometheus-2.53.2.linux-amd64/prometheus.yml
+    src: /home/jenkins/workspace/java-pipeline/TerraformAWS/Ansible/roles/prometheus/templates/prometheus.yml
     dest: /etc/prometheus/prometheus.yml
     owner: prometheus
     group: prometheus
