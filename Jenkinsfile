@@ -38,10 +38,12 @@ pipeline {
                         def frontend_ip = sh(returnStdout: true, script: "terraform output -raw frontend_public_ip").trim()
                         def backend_ip = sh(returnStdout: true, script: "terraform output -raw backend_public_ip").trim()
                         def database_ip = sh(returnStdout: true, script: "terraform output -raw database_public_ip").trim()
+                        def prometheus_ip = sh(returnStdout: true, script: "terraform output -raw database_public_ip").trim()
 
                         env.FRONTEND_IP = frontend_ip
                         env.BACKEND_IP = backend_ip
                         env.DATABASE_IP = database_ip
+                        env.PROMETHEUS_IP = prometheus_ip
                     }
                 }
             }

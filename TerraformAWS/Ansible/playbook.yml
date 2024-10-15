@@ -17,8 +17,8 @@
   roles:
     - backend
 
-# - name: Setup prometheus server
-#   hosts: prometheus_group
-#   become: true
-#   roles:
-#     - prometheus
+- name: Setup prometheus server
+  hosts: prometheus_group
+  become: true
+  roles:
+    - prometheus
