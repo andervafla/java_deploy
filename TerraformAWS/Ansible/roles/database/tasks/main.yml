@@ -104,3 +104,17 @@
   systemd:
     name: redis-server
     state: restarted
+
+- name: Copy dump file from Jenkins workspace to server
+  copy:
+    src: /home/jenkins/workspace/java-pipeline/2024-08-19.dump
+    dest: /tmp/2024-08-19.dump
+    mode: '0644'
+
+- name: Drop and recreate public schema in PostgreSQL
+  shell: |
+    psql -U postgres -d postgres_db -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+
+- name: Restore PostgreSQL database from dump
+  shell: |
+    psql -U postgres -d postgres_db -f /tmp/2024-08-19.dump
