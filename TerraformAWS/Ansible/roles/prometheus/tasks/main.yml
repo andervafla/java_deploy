@@ -1,73 +1,70 @@
-    - name: Download Prometheus
-      get_url:
-        url: https://github.com/prometheus/prometheus/releases/download/v2.53.2/prometheus-2.53.2.linux-amd64.tar.gz
-        dest: /tmp/prometheus.tar.gz
+    - name: Install required packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - wget
+        - tar
 
-    - name: Extract Prometheus
-      unarchive:
-        src: /tmp/prometheus.tar.gz
-        dest: /tmp/
-        remote_src: yes
+    - name: Create a user for Prometheus
+      user:
+        name: prometheus
+        system: yes
+        shell: /sbin/nologin
 
-    - name: Move Prometheus binary to /usr/local/bin
-      command: mv /tmp/prometheus-2.53.2.linux-amd64/prometheus /usr/local/bin/
-      args:
-        removes: /usr/local/bin/prometheus
-
-    - name: Move Promtool binary to /usr/local/bin
-      command: mv /tmp/prometheus-2.53.2.linux-amd64/promtool /usr/local/bin/
-      args:
-        removes: /usr/local/bin/promtool
-
-    - name: Create directories for Prometheus configuration and data
+    - name: Create directories for Prometheus
       file:
         path: "{{ item }}"
         state: directory
+        owner: prometheus
+        group: prometheus
+        mode: 0755
       loop:
         - /etc/prometheus
         - /var/lib/prometheus
 
-    - name: Set ownership of Prometheus data directory
-      file:
-        path: /var/lib/prometheus
-        owner: prometheus
-        group: prometheus
-        state: directory
+    - name: Download Prometheus tarball
+      get_url:
+        url: "https://github.com/prometheus/prometheus/releases/download/v2.54.1/prometheus-2.54.1.linux-amd64.tar.gz"
+        dest: /tmp/prometheus.tar.gz
+        mode: "0644"
+
+    - name: Extract Prometheus
+      unarchive:
+        src: /tmp/prometheus.tar.gz
+        dest: /opt/
+        remote_src: yes
+
+    - name: Move Prometheus binary
+      command: mv /opt/prometheus-2.54.1.linux-amd64/prometheus /usr/local/bin/
+      args:
+        creates: /usr/local/bin/prometheus
+
+    - name: Move Promtool binary
+      command: mv /opt/prometheus-2.54.1.linux-amd64/promtool /usr/local/bin/
+      args:
+        creates: /usr/local/bin/promtool
 
     - name: Copy Prometheus configuration file
       copy:
-        src: prometheus.yml
+        src: /home/jenkins/workspace/java-pipeline/TerraformAWS/Ansible/roles/prometheus/templates/prometheus.yml
         dest: /etc/prometheus/prometheus.yml
-      notify:
-        - restart prometheus
+        owner: prometheus
+        group: prometheus
+        mode: 0644
 
-    - name: Create systemd service file for Prometheus
+    - name: Set up Prometheus systemd service
       copy:
+        src: prometheus.service.j2  
         dest: /etc/systemd/system/prometheus.service
-        content: |
-          [Unit]
-          Description=Prometheus
-          Wants=network-online.target
-          After=network-online.target
+        mode: "0644"
 
-          [Service]
-          User=prometheus
-          Group=prometheus
-          Type=simple
-          ExecStart=/usr/local/bin/prometheus \
-            --config.file=/etc/prometheus/prometheus.yml \
-            --storage.tsdb.path=/var/lib/prometheus/
-
-          [Install]
-          WantedBy=multi-user.target
-
-    - name: Reload systemd
+    - name: Reload systemd daemon
       systemd:
         daemon_reload: yes
 
-    - name: Start Prometheus service
-      service:
+    - name: Enable and start Prometheus service
+      systemd:
         name: prometheus
-        state: started
         enabled: yes
-
+        state: started
