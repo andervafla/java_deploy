@@ -1,18 +1,11 @@
----
-    - name: Create prometheus user
-      user:
-        name: prometheus
-        shell: /bin/false
-        system: yes
-
     - name: Download Prometheus
       get_url:
         url: https://github.com/prometheus/prometheus/releases/download/v2.53.2/prometheus-2.53.2.linux-amd64.tar.gz
-        dest: /tmp/prometheus-2.53.2.linux-amd64.tar.gz
+        dest: /tmp/prometheus.tar.gz
 
     - name: Extract Prometheus
       unarchive:
-        src: /tmp/prometheus-2.53.2.linux-amd64.tar.gz
+        src: /tmp/prometheus.tar.gz
         dest: /tmp/
         remote_src: yes
 
@@ -30,27 +23,23 @@
       file:
         path: "{{ item }}"
         state: directory
-        owner: prometheus
-        group: prometheus
-        mode: '0755'
       loop:
         - /etc/prometheus
         - /var/lib/prometheus
 
-    - name: Set ownership of data directory
-      command: chown prometheus:prometheus /var/lib/prometheus
+    - name: Set ownership of Prometheus data directory
+      file:
+        path: /var/lib/prometheus
+        owner: prometheus
+        group: prometheus
+        state: directory
 
-    - name: Create Prometheus configuration file
+    - name: Copy Prometheus configuration file
       copy:
+        src: prometheus.yml
         dest: /etc/prometheus/prometheus.yml
-        content: |
-          global:
-            scrape_interval: 15s
-
-          scrape_configs:
-            - job_name: 'prometheus'
-              static_configs:
-                - targets: ['localhost:9090']
+      notify:
+        - restart prometheus
 
     - name: Create systemd service file for Prometheus
       copy:
@@ -67,18 +56,18 @@
           Type=simple
           ExecStart=/usr/local/bin/prometheus \
             --config.file=/etc/prometheus/prometheus.yml \
-            --storage.tsdb.path=/var/lib/prometheus/ \
-            --web.console.templates=/usr/local/bin/consoles \
-            --web.console.libraries=/usr/local/bin/console_libraries
+            --storage.tsdb.path=/var/lib/prometheus/
 
           [Install]
           WantedBy=multi-user.target
 
     - name: Reload systemd
-      command: systemctl daemon-reload
+      systemd:
+        daemon_reload: yes
 
     - name: Start Prometheus service
       service:
         name: prometheus
         state: started
         enabled: yes
+
