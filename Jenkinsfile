@@ -49,41 +49,29 @@ pipeline {
             }
         }
 
- stage('Update .env File') {
+        stage('Update .env File') {
+                    steps {
+                        script {
+                            def envFilePath = '/home/jenkins/workspace/java-pipeline/frontend/.env'
+                            def newEnvContent = "REACT_APP_API_BASE_URL=http://${env.BACKEND_IP}:8080/\n"
+                            writeFile(file: envFilePath, text: newEnvContent)
+                            echo "Updated .env content: ${newEnvContent}" 
+                        }
+                    }
+                }
+
+
+
+        stage('Update Database IP in .env') {
             steps {
                 script {
-                    def envFilePath = '/home/jenkins/workspace/java-pipeline/frontend/.env'
-                    def newEnvContent = "REACT_APP_API_BASE_URL=http://${env.BACKEND_IP}:8080/\n"
+                    def envFilePath = '/home/jenkins/workspace/java-pipeline/.env' 
+                    def newEnvContent = "IP_DB=${env.DATABASE_IP}\n" 
                     writeFile(file: envFilePath, text: newEnvContent)
-                    echo "Updated .env content: ${newEnvContent}" 
+                    echo "Updated .env content with IP_DB: ${newEnvContent}" 
                 }
             }
         }
-
-
-
-stage('Update Database IP in .env') {
-    steps {
-        script {
-            def envFilePath = '/home/jenkins/workspace/java-pipeline/.env' 
-            def newEnvContent = "IP_DB=${env.DATABASE_IP}\n" 
-            writeFile(file: envFilePath, text: newEnvContent)
-            echo "Updated .env content with IP_DB: ${newEnvContent}" 
-        }
-    }
-}
-
-stage('Display .env Content') {
-    steps {
-        script {
-            def envFilePath = '/home/jenkins/workspace/java-pipeline/.env' 
-            def envContent = readFile(envFilePath)
-            echo "Current .env content:\n${envContent}"
-        }
-    }
-}
-
-
 
         stage('Install Ansible') {
             steps {
@@ -98,93 +86,45 @@ stage('Display .env Content') {
             }
         }
 
-        stage('Show Ansible Version') {
+
+        stage('Download Gradle') {
             steps {
-                sh 'ansible --version'
+                script {
+                    if (!fileExists("${GRADLE_BIN}/gradle")) {
+                        echo "Downloading Gradle ${GRADLE_VERSION}..."
+                        sh """
+                        mkdir -p ${GRADLE_HOME}
+                        wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P ${GRADLE_HOME}
+                        unzip ${GRADLE_HOME}/gradle-${GRADLE_VERSION}-bin.zip -d ${GRADLE_HOME}
+                        rm ${GRADLE_HOME}/gradle-${GRADLE_VERSION}-bin.zip
+                        """
+                    } else {
+                        echo "Gradle ${GRADLE_VERSION} is already downloaded."
+                    }
+                }
             }
         }
 
-        // stage('Download Gradle') {
-        //     steps {
-        //         script {
-        //             if (!fileExists("${GRADLE_BIN}/gradle")) {
-        //                 echo "Downloading Gradle ${GRADLE_VERSION}..."
-        //                 sh """
-        //                 mkdir -p ${GRADLE_HOME}
-        //                 wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P ${GRADLE_HOME}
-        //                 unzip ${GRADLE_HOME}/gradle-${GRADLE_VERSION}-bin.zip -d ${GRADLE_HOME}
-        //                 rm ${GRADLE_HOME}/gradle-${GRADLE_VERSION}-bin.zip
-        //                 """
-        //             } else {
-        //                 echo "Gradle ${GRADLE_VERSION} is already downloaded."
-        //             }
-        //         }
-        //     }
-        // }
 
-        // stage('Navigate to Frontend Directory') {
-        //     steps {
-        //         dir("${FRONTEND_DIR}") {
-        //             sh 'ls -la'
-        //         }
-        //     }
-        // }
+        stage('Build Frontend') {
+            steps {
+                dir("${FRONTEND_DIR}") {
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
+            }
+        }
 
-        // stage('Build Frontend') {
-        //     steps {
-        //         dir("${FRONTEND_DIR}") {
-        //             sh 'npm install'
-        //             sh 'npm run build'
-        //         }
-        //     }
-        // }
 
-        // stage('List Files') {
-        //     steps {
-        //         dir("${FRONTEND_DIR}") {
-        //             sh 'ls -la'
-        //         }
-        //     }
-        // }
-        // stage('Check Build Files') {
-        //     steps {
-        //         sh 'ls -la /home/jenkins/workspace/java-pipeline/frontend/build'
-        //     }
-        // }
+        stage('Build Backend') {
+            steps {
+                script {
+                    env.PATH = "${GRADLE_BIN}:${env.PATH}"
+                    sh 'gradle build -x test --no-daemon'
+                }
+            }
+        }
 
-        // stage('Build Backend') {
-        //     steps {
-        //         script {
-        //             env.PATH = "${GRADLE_BIN}:${env.PATH}"
-        //             sh 'gradle build -x test --no-daemon'
-        //         }
-        //     }
-        // }
-
-        // stage('Create Ansible Vars') { 
-        //     steps {
-        //         dir("${ANSIBLE_DIR}") {
-        //             script {
-        //                 def outputFile = "${TERRAFORM_DIR}/outputs.json"
-                        
-        //                 if (!fileExists(outputFile)) {
-        //                     error "File outputs.json does not exist!"
-        //                 }
-                        
-        //                 def output = readJSON file: outputFile
-        //                 def varsContent = """
-        // ssh_key_path: /home/jenkins/workspace/java-pipeline/TerraformAWS/key/my_ssh_key
-        // frontend_ip: ${output.frontend_public_ip.value}
-        // backend_ip: ${output.backend_public_ip.value}
-        // database_ip: ${output.database_public_ip.value}
-        // """
-        //                 writeFile file: 'vars.yml', text: varsContent
-                        
-        //                 echo readFile('vars.yml')
-        //             }
-        //         }
-        //     }
-        // }
 
         stage('Run Ansible Playbook') {
     steps {
@@ -210,13 +150,6 @@ stage('Display .env Content') {
         success {
             echo 'Pipeline completed successfully.'
         }
-        failure {
-            script {
-                echo 'Pipeline failed. Attempting to destroy Terraform resources.'
-                dir("${TERRAFORM_DIR}") {
-                    sh 'terraform destroy -auto-approve'
-                }
-            }
-        }
+
     }
 }
