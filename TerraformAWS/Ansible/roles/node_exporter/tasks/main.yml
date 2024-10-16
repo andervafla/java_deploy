@@ -1,5 +1,5 @@
 - name: Ensure wget and tar are installed
-  ansible.builtin.yum:
+  ansible.builtin.apt:
     name: "{{ item }}"
     state: present
   loop:
@@ -10,7 +10,7 @@
   ansible.builtin.user:
     name: node_exporter
     system: yes
-    shell: /sbin/nologin
+    shell: /usr/sbin/nologin
 
 - name: Create directories for Node Exporter
   ansible.builtin.file:
