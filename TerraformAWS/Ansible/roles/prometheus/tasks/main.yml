@@ -1,27 +1,35 @@
-    - name: Завантаження архіву Prometheus
+---
+    - name: Завантаження останньої версії Prometheus
       ansible.builtin.get_url:
-        url: "https://github.com/prometheus/prometheus/releases/download/v2.53.2/prometheus-2.53.2.linux-amd64.tar.gz"
-        dest: "/tmp/prometheus-2.53.2.linux-amd64.tar.gz"
-    
+        url: https://github.com/prometheus/prometheus/releases/download/v2.53.2/prometheus-2.53.2.linux-amd64.tar.gz
+        dest: /tmp/prometheus-2.53.2.linux-amd64.tar.gz
+
     - name: Розпакування архіву Prometheus
       ansible.builtin.unarchive:
-        src: "/tmp/prometheus-2.53.2.linux-amd64.tar.gz"
-        dest: "/tmp"
+        src: /tmp/prometheus-2.53.2.linux-amd64.tar.gz
+        dest: /tmp/
         remote_src: yes
 
-    - name: Переміщення бінарних файлів Prometheus у /usr/local/bin
+    - name: Створення користувача Prometheus
+      ansible.builtin.user:
+        name: prometheus
+        shell: /bin/false
+        system: yes
+        create_home: no
+
+    - name: Переміщення бінарних файлів у /usr/local/bin
       ansible.builtin.copy:
-        src: "/tmp/prometheus-2.53.2.linux-amd64/prometheus"
-        dest: "/usr/local/bin/prometheus"
-        mode: '0755'
+        src: /tmp/prometheus-2.53.2.linux-amd64/prometheus
+        dest: /usr/local/bin/
         remote_src: yes
+        mode: '0755'
 
     - name: Переміщення promtool у /usr/local/bin
       ansible.builtin.copy:
-        src: "/tmp/prometheus-2.53.2.linux-amd64/promtool"
-        dest: "/usr/local/bin/promtool"
-        mode: '0755'
+        src: /tmp/prometheus-2.53.2.linux-amd64/promtool
+        dest: /usr/local/bin/
         remote_src: yes
+        mode: '0755'
 
     - name: Створення директорій для Prometheus
       ansible.builtin.file:
@@ -34,21 +42,7 @@
         - /etc/prometheus
         - /var/lib/prometheus
 
-    - name: Створення користувача Prometheus
-      ansible.builtin.user:
-        name: prometheus
-        shell: /bin/false
-        system: yes
-        create_home: no
-
-    - name: Зміна власника директорій
-      ansible.builtin.file:
-        path: /var/lib/prometheus
-        state: directory
-        owner: prometheus
-        group: prometheus
-
-    - name: Створення конфігураційного файлу Prometheus
+    - name: Копіювання конфігураційного файлу Prometheus
       ansible.builtin.copy:
         dest: /etc/prometheus/prometheus.yml
         content: |
@@ -59,9 +53,6 @@
             - job_name: 'prometheus'
               static_configs:
                 - targets: ['localhost:9090']
-        owner: prometheus
-        group: prometheus
-        mode: '0644'
 
     - name: Створення systemd сервісу для Prometheus
       ansible.builtin.copy:
@@ -84,12 +75,13 @@
 
           [Install]
           WantedBy=multi-user.target
-        owner: root
-        group: root
-        mode: '0644'
 
-    - name: Перезапуск systemd та запуск Prometheus
+    - name: Перезавантаження systemd
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Запуск Prometheus
       ansible.builtin.systemd:
         name: prometheus
-        enabled: yes
         state: started
+        enabled: yes
