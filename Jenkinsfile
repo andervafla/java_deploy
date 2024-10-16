@@ -134,7 +134,7 @@ pipeline {
                 sshagent (credentials: ['my_ssh_key']) {
                     sh """
                         ansible-playbook -i inventory.yml playbook.yml \
-                        --extra-vars "database_ip=${DATABASE_IP}"
+                        --extra-vars "database_ip=${DATABASE_IP} frontend_ip=${FRONTEND_IP} backend_ip=${BACKEND_IP}"
                     """
                 }
             }
