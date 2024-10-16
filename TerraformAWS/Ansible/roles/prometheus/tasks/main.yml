@@ -1,3 +1,10 @@
+---
+    - name: Create prometheus user
+      user:
+        name: prometheus
+        shell: /bin/false
+        system: yes
+
     - name: Download Prometheus
       get_url:
         url: https://github.com/prometheus/prometheus/releases/download/v2.53.2/prometheus-2.53.2.linux-amd64.tar.gz
@@ -29,12 +36,6 @@
       loop:
         - /etc/prometheus
         - /var/lib/prometheus
-
-    - name: Create prometheus user
-      user:
-        name: prometheus
-        shell: /bin/false
-        system: yes
 
     - name: Set ownership of data directory
       command: chown prometheus:prometheus /var/lib/prometheus
