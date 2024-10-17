@@ -2,11 +2,6 @@ pipeline {
     agent { label 'jenks-node' }
 
     environment {
-        GITHUB_REPO = 'https://github.com/andervafla/java_deploy.git' 
-        FRONTEND_DIR = 'frontend'
-        TERRAFORM_DIR = 'TerraformAWS'
-        ANSIBLE_DIR = 'TerraformAWS/Ansible' 
-        GRADLE_VERSION = '7.2' 
         GRADLE_HOME = "${env.WORKSPACE}/gradle"  
         GRADLE_BIN = "${GRADLE_HOME}/gradle-${GRADLE_VERSION}/bin" 
         SSH_KEY_PATH = "${env.WORKSPACE}/key/my_ssh_key"
@@ -15,7 +10,7 @@ pipeline {
     stages {
         stage('Initialize Terraform') {
             steps {
-                dir("${TERRAFORM_DIR}") {
+                dir("TerraformAWS") {
                     script {
                         sh 'terraform init'
                     }
@@ -25,7 +20,7 @@ pipeline {
 
         stage('Apply Terraform') {
             steps {
-                dir("${TERRAFORM_DIR}") {
+                dir("TerraformAWS") {
                     sh 'terraform apply -auto-approve'
                 }
             }
@@ -33,7 +28,7 @@ pipeline {
 
          stage('Retrieve Terraform Outputs') {
             steps {
-                dir("${TERRAFORM_DIR}") {
+                dir("TerraformAWS") {
                     script {
                         def frontend_ip = sh(returnStdout: true, script: "terraform output -raw frontend_public_ip").trim()
                         def backend_ip = sh(returnStdout: true, script: "terraform output -raw backend_public_ip").trim()
@@ -66,7 +61,7 @@ pipeline {
 
         stage('Build Frontend') {
             steps {
-                dir("${FRONTEND_DIR}") {
+                dir("frontend") {
                     sh 'npm install'
                     sh 'npm run build'
                 }
@@ -86,7 +81,7 @@ pipeline {
 
         stage('Run Ansible Playbook') {
     steps {
-        dir("${ANSIBLE_DIR}") {
+        dir("TerraformAWS/Ansible") {
             script {
                 sshagent (credentials: ['my_ssh_key']) {
                     sh """
