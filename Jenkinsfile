@@ -63,49 +63,6 @@ pipeline {
 
 
 
-        stage('Update Database IP in .env') {
-            steps {
-                script {
-                    def envFilePath = '/home/jenkins/workspace/java-pipeline/.env' 
-                    def newEnvContent = "IP_DB=${env.DATABASE_IP}\n" 
-                    writeFile(file: envFilePath, text: newEnvContent)
-                    echo "Updated .env content with IP_DB: ${newEnvContent}" 
-                }
-            }
-        }
-
-        stage('Install Ansible') {
-            steps {
-                script {
-                    sh '''
-                    sudo apt update
-                    sudo apt install software-properties-common -y
-                    sudo add-apt-repository --yes --update ppa:ansible/ansible
-                    sudo apt install ansible -y
-                    '''
-                }
-            }
-        }
-
-
-        stage('Download Gradle') {
-            steps {
-                script {
-                    if (!fileExists("${GRADLE_BIN}/gradle")) {
-                        echo "Downloading Gradle ${GRADLE_VERSION}..."
-                        sh """
-                        mkdir -p ${GRADLE_HOME}
-                        wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P ${GRADLE_HOME}
-                        unzip ${GRADLE_HOME}/gradle-${GRADLE_VERSION}-bin.zip -d ${GRADLE_HOME}
-                        rm ${GRADLE_HOME}/gradle-${GRADLE_VERSION}-bin.zip
-                        """
-                    } else {
-                        echo "Gradle ${GRADLE_VERSION} is already downloaded."
-                    }
-                }
-            }
-        }
-
 
         stage('Build Frontend') {
             steps {
