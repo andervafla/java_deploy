@@ -4,15 +4,24 @@
   become: true
   roles:
     - frontend 
+    - node_exporter
 
-# - name: Setup backend server
-#   hosts: backend_group
-#   become: true
-#   roles:
-#     - backend
+- name: Setup database server
+  hosts: database_group
+  become: true
+  roles:
+    - database
 
-# - name: Setup database server
-#   hosts: database_group
-#   become: true
-#   roles:
-#     - database
+- name: Setup backend server
+  hosts: backend_group
+  become: true
+  roles:
+    - backend
+    - node_exporter
+
+- name: Setup prometheus server
+  hosts: prometheus_group
+  become: true
+  roles:
+    - prometheus
+    - grafana

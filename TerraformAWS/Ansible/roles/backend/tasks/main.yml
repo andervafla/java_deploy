@@ -8,6 +8,11 @@
     name: openjdk-11-jdk
     state: present
 
+- name: Install PostgreSQL client
+  apt:
+    name: postgresql-client
+    state: present
+
 - name: Download Tomcat
   get_url:
     url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.96/bin/apache-tomcat-9.0.96.tar.gz"
@@ -19,11 +24,6 @@
     src: /opt/apache-tomcat-9.0.96.tar.gz
     dest: /opt/
     remote_src: yes
-
-- name: Configure Tomcat Users
-  template:
-    src: tomcat-users.xml.j2
-    dest: /opt/apache-tomcat-9.0.96/conf/tomcat-users.xml
 
 - name: Create Tomcat service file
   copy:
@@ -40,6 +40,7 @@
       ExecStart=/opt/apache-tomcat-9.0.96/bin/startup.sh
       ExecStop=/opt/apache-tomcat-9.0.96/bin/shutdown.sh
       Restart=on-failure
+      Environment=DB_HOST={{ database_ip }}
 
       [Install]
       WantedBy=multi-user.target
@@ -58,6 +59,11 @@
   apt:
     name: git
     state: present
+
+- name: Remove ROOT folder
+  file:
+    path: /opt/apache-tomcat-9.0.96/webapps/ROOT
+    state: absent
 
 - name: Copy WAR file to Tomcat as ROOT.war
   copy:

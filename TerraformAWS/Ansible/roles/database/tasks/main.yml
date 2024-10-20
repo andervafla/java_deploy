@@ -1,3 +1,4 @@
+---
 - name: Update apt cache
   apt:
     update_cache: yes
@@ -66,3 +67,41 @@
     name: redis-server
     enabled: yes
     state: started
+
+- name: Configure PostgreSQL to listen on all addresses
+  lineinfile:
+    path: /etc/postgresql/14/main/postgresql.conf  
+    regexp: '^#?listen_addresses'
+    line: "listen_addresses = '*'"
+
+- name: Configure pg_hba.conf for remote access
+  lineinfile:
+    path: /etc/postgresql/14/main/pg_hba.conf
+    line: "host    all             all             0.0.0.0/0           md5"
+    state: present
+
+- name: Change PostgreSQL user password
+  shell: sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'password';"
+
+- name: Create PostgreSQL database
+  shell: sudo -u postgres psql -c "CREATE DATABASE postgres_db;"
+
+- name: Allow PostgreSQL port through UFW
+  shell: sudo ufw allow 5432/tcp
+
+- name: Configure Redis to bind to all addresses
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^#?bind'
+    line: "bind 0.0.0.0"
+
+- name: Restart PostgreSQL
+  systemd:
+    name: postgresql
+    state: restarted
+
+- name: Restart Redis
+  systemd:
+    name: redis-server
+    state: restarted
+

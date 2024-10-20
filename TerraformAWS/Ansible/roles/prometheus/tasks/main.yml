@@ -1,0 +1,83 @@
+---
+    - name: Install required packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - wget
+        - tar
+
+    - name: Create a user for Prometheus
+      user:
+        name: prometheus
+        system: yes
+        shell: /sbin/nologin
+
+    - name: Create directories for Prometheus
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: prometheus
+        group: prometheus
+        mode: 0755
+      loop:
+        - /etc/prometheus
+        - /var/lib/prometheus
+
+    - name: Download Prometheus tarball
+      get_url:
+        url: "https://github.com/prometheus/prometheus/releases/download/v2.54.1/prometheus-2.54.1.linux-amd64.tar.gz"
+        dest: /tmp/prometheus.tar.gz
+        mode: "0644"
+
+    - name: Extract Prometheus
+      unarchive:
+        src: /tmp/prometheus.tar.gz
+        dest: /opt/
+        remote_src: yes
+
+    - name: Move Prometheus binary
+      command: mv /opt/prometheus-2.54.1.linux-amd64/prometheus /usr/local/bin/
+      args:
+        creates: /usr/local/bin/prometheus
+
+    - name: Move Promtool binary
+      command: mv /opt/prometheus-2.54.1.linux-amd64/promtool /usr/local/bin/
+      args:
+        creates: /usr/local/bin/promtool
+
+    - name: Copy Prometheus configuration file
+      copy:
+        content: |
+          global:
+            scrape_interval: 15s  
+
+          scrape_configs:
+            - job_name: 'prometheus'
+              static_configs:
+                - targets: ['localhost:9090']  
+
+            - job_name: 'ec2-node-exporter'
+              static_configs:
+                - targets: ['{{ frontend_ip }}:9100']
+                - targets: ['{{ backend_ip }}:9100']
+        dest: /etc/prometheus/prometheus.yml
+        owner: prometheus
+        group: prometheus
+        mode: 0644
+
+    - name: Set up Prometheus systemd service
+      template:
+        src: /home/jenkins/workspace/java-pipeline/TerraformAWS/Ansible/roles/prometheus/templates/prometheus.service
+        dest: /etc/systemd/system/prometheus.service
+        mode: "0644"
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start Prometheus service
+      systemd:
+        name: prometheus
+        enabled: yes
+        state: started
